@@ -1,0 +1,96 @@
+# .github/workflows/daily-corpus-refresh.yml
+# Triggers daily at 09:15 AM IST (03:45 AM UTC)
+# Runs the full corpus pipeline: scrape → chunk → embed → finalize
+
+name: Daily Corpus Refresh — 09:15 AM IST
+
+on:
+  schedule:
+    - cron: "45 3 * * *"   # 03:45 UTC = 09:15 IST every day
+  workflow_dispatch:        # allows manual trigger from GitHub UI or via REST API
+
+jobs:
+  refresh-corpus:
+    name: Fetch, Scrape, Chunk, and Embed
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # ── 1. Checkout ─────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Python setup ─────────────────────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # ── 3. Install Python dependencies ─────────────────────────────────────
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # ── 4. Install Playwright Chromium (for Angular SPA pages) ──────────────
+      - name: Install Playwright Chromium
+        run: |
+          playwright install chromium
+          playwright install-deps chromium
+
+      # ── 5. Scraping service ─────────────────────────────────────────────────
+      # Fetches all 20 approved URLs in crawl-priority order (P1 → P2 → P3 → P4)
+      # Strips nav/footer/banners, runs PII guard, computes SHA-256 content hash
+      - name: Run scraping service
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          INGEST_RUN_ID: ${{ github.run_id }}
+        run: |
+          python -m pipeline.scrape
+
+      # ── 6. Chunking service ─────────────────────────────────────────────────
+      # Splits cleaned text by page type, deduplicates via content hash,
+      # writes chunks to source_chunks with embedding_status = pending
+      - name: Run chunking service
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          INGEST_RUN_ID: ${{ github.run_id }}
+        run: |
+          python -m pipeline.chunk
+
+      # ── 7. Embedding service ────────────────────────────────────────────────
+      # Embeds only pending chunks; skips unchanged chunks to reduce API cost
+      # Falls back to local all-MiniLM-L6-v2 if OpenAI API is unavailable
+      - name: Run embedding service
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          INGEST_RUN_ID: ${{ github.run_id }}
+        run: |
+          python -m pipeline.embed
+
+      # ── 8. Finalize run ─────────────────────────────────────────────────────
+      # Updates source_documents crawl status, writes scraping_logs run record
+      - name: Finalize run
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          INGEST_RUN_ID: ${{ github.run_id }}
+        run: |
+          python -m pipeline.finalize
+
+      # ── 9. Upload crawl log artifact ────────────────────────────────────────
+      - name: Upload crawl log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crawl-log-${{ github.run_id }}
+          path: data/logs/
+          retention-days: 30
+
+      # ── 10. Failure notification ─────────────────────────────────────────────
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Daily corpus refresh FAILED at $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          echo "::error::Check data/logs/ or scraping_logs table for details"
