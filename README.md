@@ -12,10 +12,10 @@
 |---|---|---|
 | 1 | Scope Freeze — URL Manifest | ✅ Complete |
 | 2 | Ingestion — Scheduler + Scraping Service | ✅ Complete |
-| 3 | Knowledge — Chunking + Embedding + Fact Cards | 🔲 Not Started |
-| 4 | Classification — Query Router + Refusal Engine | 🔲 Not Started |
-| 5 | Retrieval — Hybrid Search + Citation Selector | 🔲 Not Started |
-| 6 | Formatting — Answer Composer + One-Link Contract | 🔲 Not Started |
+| 3 | Knowledge — Chunking + Embedding + Fact Cards | ✅ Complete |
+| 4 | Classification — Query Router + Refusal Engine | ✅ Complete |
+| 5 | Retrieval — Hybrid Search + Citation Selector | ✅ Complete |
+| 6 | Formatting — Answer Composer + One-Link Contract | 🔲 In Progress |
 | 7 | API — FastAPI Backend + Multi-Thread Support | 🔲 Not Started |
 | 8 | UI — Groww-Style Minimal Chat Interface | 🔲 Not Started |
 | 9 | QA — Evaluation + Refusal Testing + Citation Validation | 🔲 Not Started |
