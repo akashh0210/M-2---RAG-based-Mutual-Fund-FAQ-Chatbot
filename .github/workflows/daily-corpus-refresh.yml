@@ -36,8 +36,12 @@ jobs:
       # ── 4. Install Playwright Chromium (for Angular SPA pages) ──────────────
       - name: Install Playwright Chromium
         run: |
-          playwright install chromium
-          playwright install-deps chromium
+          # Install the updated audio library for Ubuntu 24.04
+          sudo apt-get update
+          sudo apt-get install -y libasound2t64
+          # Install chromium browser and its other dependencies
+          pip install playwright
+          npx playwright install chromium --with-deps
 
       # ── 5. Scraping service ─────────────────────────────────────────────────
       # Fetches all 20 approved URLs in crawl-priority order (P1 → P2 → P3 → P4)
