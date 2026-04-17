@@ -82,8 +82,4 @@ def _now_iso() -> str:
 
 
 if __name__ == "__main__":
-    try:
-        finalize_run()
-    except Exception:
-        traceback.print_exc(file=sys.stdout)
-        sys.exit(1)
+    finalize_run()

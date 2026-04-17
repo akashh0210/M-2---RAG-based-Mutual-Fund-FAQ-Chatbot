@@ -70,31 +70,25 @@ def execute_full_pipeline() -> None:
     logger.info(" SBI-MF RAG INGESTION PIPELINE | RUN_ID: %s ", RUN_ID)
     logger.info("=" * 80)
 
-    try:
-        # Step 1: Scrape
-        logger.info("[STEP 1/5] Scraping 20 URLs...")
-        run_daily_scrape()
+    # Step 1: Scrape
+    logger.info("[STEP 1/5] Scraping 20 URLs...")
+    run_daily_scrape()
 
-        # Step 2: Extract Facts (Deterministic Layer)
-        logger.info("[STEP 2/5] Extracting deterministic facts (Scheme Fact Cards)...")
-        run_fact_extraction()
+    # Step 2: Extract Facts (Deterministic Layer)
+    logger.info("[STEP 2/5] Extracting deterministic facts (Scheme Fact Cards)...")
+    run_fact_extraction()
 
-        # Step 3: Chunk
-        logger.info("[STEP 3/5] Chunking cleaned text...")
-        run_chunking()
+    # Step 3: Chunk
+    logger.info("[STEP 3/5] Chunking cleaned text...")
+    run_chunking()
 
-        # Step 4: Embed
-        logger.info("[STEP 4/5] Generating vector embeddings (OpenAI/Local)...")
-        run_embedding()
+    # Step 4: Embed
+    logger.info("[STEP 4/5] Generating vector embeddings (OpenAI/Local)...")
+    run_embedding()
 
-        # Step 5: Finalize
-        logger.info("[STEP 5/5] Finalizing run status...")
-        finalize_run()
-
-    except Exception as e:
-        logger.error("!!! PIPELINE CRITICAL FAILURE !!!")
-        traceback.print_exc(file=sys.stdout)
-        sys.exit(1)
+    # Step 5: Finalize
+    logger.info("[STEP 5/5] Finalizing run status...")
+    finalize_run()
 
     duration = datetime.now(timezone.utc) - start_time
     logger.info("=" * 80)

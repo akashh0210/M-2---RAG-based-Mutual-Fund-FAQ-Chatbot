@@ -226,8 +226,4 @@ if __name__ == "__main__":
         level=logging.INFO,
         handlers=[logging.StreamHandler(sys.stdout)]
     )
-    try:
-        run_chunking()
-    except Exception:
-        traceback.print_exc(file=sys.stdout)
-        sys.exit(1)
+    run_chunking()

@@ -393,8 +393,4 @@ def _now_iso() -> str:
 # ── Allow running as module ───────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    try:
-        run_daily_scrape()
-    except Exception:
-        traceback.print_exc(file=sys.stdout)
-        sys.exit(1)
+    run_daily_scrape()
