@@ -126,25 +126,26 @@ def init_db(conn) -> None:
         )
     """)
 
-    # ── scraping_logs ─────────────────────────────────────────────────────────
+    # ── threads ───────────────────────────────────────────────────────────────
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS scraping_logs (
-            log_id                TEXT PRIMARY KEY,
-            run_id                TEXT NOT NULL,
-            run_triggered_by      TEXT NOT NULL DEFAULT 'scheduler',
-            run_at                TEXT NOT NULL,
-            source_id             TEXT,
-            url                   TEXT NOT NULL,
-            crawl_priority        INTEGER,
-            http_status           INTEGER,
-            fetch_method          TEXT,
-            source_status         TEXT,
-            chunk_count           INTEGER DEFAULT 0,
-            content_changed       INTEGER DEFAULT 0,
-            pii_alert             INTEGER DEFAULT 0,
-            pii_alert_types       TEXT,
-            duration_ms           INTEGER,
-            error_message         TEXT
+        CREATE TABLE IF NOT EXISTS threads (
+            thread_id         TEXT PRIMARY KEY,
+            last_scheme_name  TEXT,
+            last_route        TEXT,
+            created_at        TEXT NOT NULL,
+            updated_at        TEXT NOT NULL
+        )
+    """)
+
+    # ── messages ──────────────────────────────────────────────────────────────
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS messages (
+            message_id        TEXT PRIMARY KEY,
+            thread_id         TEXT NOT NULL REFERENCES threads(thread_id),
+            role              TEXT NOT NULL,
+            content           TEXT NOT NULL,
+            metadata          TEXT,
+            created_at        TEXT NOT NULL
         )
     """)
 
@@ -158,6 +159,66 @@ def init_db(conn) -> None:
         pass # already exists
 
     logger.info("Database tables initialised")
+
+
+# ── thread and message helpers ────────────────────────────────────────────────
+
+def get_thread_context(conn, thread_id: str) -> dict:
+    """Return the last scheme and route for a thread."""
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT last_scheme_name, last_route FROM threads WHERE thread_id = ?",
+        (thread_id,)
+    )
+    row = cursor.fetchone()
+    if row:
+        return {"last_scheme_name": row["last_scheme_name"], "last_route": row["last_route"]}
+    
+    # Initialize thread if not exists
+    now = _now()
+    cursor.execute(
+        "INSERT INTO threads (thread_id, created_at, updated_at) VALUES (?, ?, ?)",
+        (thread_id, now, now)
+    )
+    conn.commit()
+    return {"last_scheme_name": None, "last_route": None}
+
+
+def update_thread_context(conn, thread_id: str, scheme_name: str | None, route: str | None) -> None:
+    """Update metadata for a thread."""
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE threads 
+        SET last_scheme_name = ?, last_route = ?, updated_at = ?
+        WHERE thread_id = ?
+    """, (scheme_name, route, _now(), thread_id))
+    conn.commit()
+
+
+def save_message(conn, thread_id: str, role: str, content: str, metadata: dict | None = None) -> None:
+    """Save a message to the history."""
+    import json
+    import uuid
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO messages (message_id, thread_id, role, content, metadata, created_at)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (str(uuid.uuid4()), thread_id, role, content, json.dumps(metadata) if metadata else None, _now()))
+    conn.commit()
+
+
+def get_thread_history(conn, thread_id: str, limit: int = 10) -> list[dict]:
+    """Return the last N messages for a thread."""
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT role, content, metadata, created_at FROM messages
+        WHERE thread_id = ?
+        ORDER BY created_at DESC
+        LIMIT ?
+    """, (thread_id, limit))
+    rows = cursor.fetchall()
+    # Return in chronological order
+    return [dict(row) for row in reversed(rows)]
 
 
 # ── source_documents helpers ──────────────────────────────────────────────────

@@ -20,6 +20,7 @@ import hashlib
 import json
 import logging
 import os
+import sys
 import re
 import time
 import uuid
@@ -50,7 +51,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
     handlers=[
-        logging.StreamHandler(),
+        logging.StreamHandler(sys.stdout),
         logging.FileHandler(f"{LOG_DIR}/scrape_{RUN_ID}.log", encoding="utf-8"),
     ],
 )
@@ -280,7 +281,8 @@ def _fetch_with_playwright(url: str) -> tuple[str, int]:
         return "", 0
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=True)
+        headless_mode = os.environ.get("HEADLESS", "true").lower() == "true"
+        browser = pw.chromium.launch(headless=headless_mode)
         page = browser.new_page(
             user_agent=HEADERS["User-Agent"],
             extra_http_headers={"Accept-Language": "en-IN,en;q=0.9"},

@@ -12,6 +12,7 @@ Vectors are stored as JSON-serialized strings in the SQLite 'embedding' column.
 import json
 import logging
 import os
+import sys
 from typing import List, Optional
 
 from tqdm import tqdm
@@ -111,5 +112,8 @@ def run_embedding() -> None:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=logging.INFO,
+        handlers=[logging.StreamHandler(sys.stdout)]
+    )
     run_embedding()

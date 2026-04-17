@@ -17,6 +17,7 @@ import logging
 import os
 import sys
 import uuid
+import traceback
 from datetime import datetime, timezone
 
 # Ensure project root is in path
@@ -32,14 +33,15 @@ from pipeline.finalize import finalize_run
 RUN_ID = str(uuid.uuid4())
 os.environ["INGEST_RUN_ID"] = RUN_ID
 
-# Ensure logs directory exists
+# Ensure logs directory and vector_db directory exists
 os.makedirs("logs", exist_ok=True)
+os.makedirs("vector_db", exist_ok=True)
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
     handlers=[
-        logging.StreamHandler(),
+        logging.StreamHandler(sys.stdout),
         logging.FileHandler(os.path.join("logs", f"pipeline_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"))
     ]
 )
@@ -77,7 +79,7 @@ def execute_full_pipeline() -> None:
 
     except Exception as e:
         logger.error("!!! PIPELINE CRITICAL FAILURE !!!")
-        logger.error(e, exc_info=True)
+        traceback.print_exc(file=sys.stdout)
         sys.exit(1)
 
     duration = datetime.now(timezone.utc) - start_time

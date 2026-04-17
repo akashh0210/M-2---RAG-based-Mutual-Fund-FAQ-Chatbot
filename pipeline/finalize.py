@@ -14,6 +14,7 @@ Run directly:   python -m pipeline.finalize
 import json
 import logging
 import os
+import sys
 import uuid
 from datetime import datetime, timezone
 
@@ -24,6 +25,7 @@ RUN_ID = os.environ.get("INGEST_RUN_ID", "local")
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)]
 )
 logger = logging.getLogger("pipeline.finalize")
 

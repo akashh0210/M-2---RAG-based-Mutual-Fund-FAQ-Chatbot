@@ -17,6 +17,7 @@ import hashlib
 import json
 import logging
 import os
+import sys
 import re
 import uuid
 from datetime import datetime, timezone
@@ -220,5 +221,8 @@ def _split_into_segments(text: str, doc_type: str) -> list[dict]:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=logging.INFO,
+        handlers=[logging.StreamHandler(sys.stdout)]
+    )
     run_chunking()
