@@ -20,16 +20,23 @@ logger = logging.getLogger("pipeline.vector_store")
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 COLLECTION_NAME = "sbi_mf_knowledge"
-CHROMA_API_KEY = os.getenv("CHROMA_API_KEY")
-CHROMA_TENANT = os.getenv("CHROMA_TENANT")
-CHROMA_DATABASE = os.getenv("CHROMA_DATABASE", "default")
+CHROMA_API_KEY = (os.getenv("CHROMA_API_KEY") or "").strip()
+CHROMA_TENANT = (os.getenv("CHROMA_TENANT") or "").strip()
+CHROMA_DATABASE = (os.getenv("CHROMA_DATABASE") or "default").strip()
 
 # ── Service Class ─────────────────────────────────────────────────────────────
 
 class VectorStore:
     def __init__(self):
         if not CHROMA_API_KEY:
-            logger.error("CHROMA_API_KEY not found in environment. Vector store will fail.")
+            msg = "CRITICAL ERROR: CHROMA_API_KEY is empty or missing after stripping whitespace."
+            logger.error(msg)
+            raise ValueError(msg)
+        
+        if not CHROMA_TENANT:
+            msg = "CRITICAL ERROR: CHROMA_TENANT is empty or missing."
+            logger.error(msg)
+            raise ValueError(msg)
         
         logger.info("Connecting to Chroma Cloud (Tenant: %s, DB: %s)", CHROMA_TENANT, CHROMA_DATABASE)
         
