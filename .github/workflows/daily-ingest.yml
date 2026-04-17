@@ -15,12 +15,6 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       HEADLESS: 'true'
-      CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
-      CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
-      CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
-      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -44,6 +38,13 @@ jobs:
           npx playwright install chromium --with-deps
 
       - name: Run Ingestion Pipeline
+        env:
+          CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
+          CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
+          CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           # The orchestrator runs Scrape -> Fact Extract -> Chunk -> Embed -> Cloud
           python -m pipeline.run_pipeline
