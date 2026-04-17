@@ -11,7 +11,9 @@ Target: source_documents with document_type='scheme_page'
 
 import logging
 import os
+import sys
 import re
+import traceback
 from datetime import datetime, timezone
 
 from pipeline.models import get_connection
@@ -161,5 +163,12 @@ def _clean_exit_load(text: str) -> str:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    run_fact_extraction()
+    logging.basicConfig(
+        level=logging.INFO,
+        handlers=[logging.StreamHandler(sys.stdout)]
+    )
+    try:
+        run_fact_extraction()
+    except Exception:
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(1)

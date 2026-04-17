@@ -28,6 +28,7 @@ from pipeline.fact_extractor import run_fact_extraction
 from pipeline.chunk import run_chunking
 from pipeline.embed import run_embedding
 from pipeline.finalize import finalize_run
+from pipeline.models import mask_url
 
 # ── Global ID for the run ─────────────────────────────────────────────────────
 RUN_ID = str(uuid.uuid4())
@@ -52,6 +53,19 @@ def execute_full_pipeline() -> None:
     """Run the end-to-end ingestion refresh."""
     start_time = datetime.now(timezone.utc)
     
+    # CI Environment Debug Info
+    print("\n" + "=" * 80)
+    print(" CI ENVIRONMENT CHECK ")
+    print("-" * 80)
+    print(f"  GROQ_API_KEY      : {'LOADED' if os.getenv('GROQ_API_KEY') else 'MISSING'}")
+    print(f"  CHROMA_API_KEY    : {'LOADED' if os.getenv('CHROMA_API_KEY') else 'MISSING'}")
+    print(f"  CHROMA_TENANT     : {os.getenv('CHROMA_TENANT', 'MISSING')}")
+    print(f"  CHROMA_DATABASE   : {os.getenv('CHROMA_DATABASE', 'MISSING')}")
+    print(f"  DATABASE_URL      : {mask_url(os.getenv('DATABASE_URL', 'Using SQLite'))}")
+    print(f"  GITHUB_ACTIONS    : {os.getenv('GITHUB_ACTIONS', 'false')}")
+    print("=" * 80 + "\n")
+    sys.stdout.flush()
+
     logger.info("=" * 80)
     logger.info(" SBI-MF RAG INGESTION PIPELINE | RUN_ID: %s ", RUN_ID)
     logger.info("=" * 80)

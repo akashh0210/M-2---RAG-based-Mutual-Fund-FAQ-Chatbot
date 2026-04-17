@@ -24,6 +24,7 @@ import sys
 import re
 import time
 import uuid
+import traceback
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 
@@ -392,4 +393,8 @@ def _now_iso() -> str:
 # ── Allow running as module ───────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    run_daily_scrape()
+    try:
+        run_daily_scrape()
+    except Exception:
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(1)

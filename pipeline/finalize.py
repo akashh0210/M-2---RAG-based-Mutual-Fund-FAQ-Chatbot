@@ -16,6 +16,7 @@ import logging
 import os
 import sys
 import uuid
+import traceback
 from datetime import datetime, timezone
 
 from pipeline.models import get_connection, write_scraping_log
@@ -81,4 +82,8 @@ def _now_iso() -> str:
 
 
 if __name__ == "__main__":
-    finalize_run()
+    try:
+        finalize_run()
+    except Exception:
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(1)

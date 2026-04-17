@@ -29,6 +29,20 @@ DB_PATH = Path(__file__).parent.parent / "data" / "rag.db"
 DATABASE_URL = os.environ.get("DATABASE_URL", "")  # empty → use SQLite
 
 
+def mask_url(url: str) -> str:
+    """Mask the user:password part of a URL."""
+    if not url:
+        return ""
+    if "@" in url:
+        try:
+            prefix, rest = url.split("://", 1)
+            auth, host = rest.split("@", 1)
+            return f"{prefix}://*****:*****@{host}"
+        except Exception:
+            return "*****"
+    return url
+
+
 def get_connection():
     """
     Return a database connection.
@@ -37,8 +51,9 @@ def get_connection():
     if DATABASE_URL.startswith("postgres"):
         try:
             import psycopg2
+            masked_db = mask_url(DATABASE_URL)
+            logger.info("Connecting to PostgreSQL: %s", masked_db)
             conn = psycopg2.connect(DATABASE_URL)
-            logger.info("Connected to PostgreSQL")
             return conn
         except ImportError:
             logger.warning("psycopg2 not installed — falling back to SQLite")

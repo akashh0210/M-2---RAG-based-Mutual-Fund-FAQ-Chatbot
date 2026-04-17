@@ -20,6 +20,7 @@ import os
 import sys
 import re
 import uuid
+import traceback
 from datetime import datetime, timezone
 
 from pipeline.models import get_connection, insert_chunk, get_source_document, \
@@ -225,4 +226,8 @@ if __name__ == "__main__":
         level=logging.INFO,
         handlers=[logging.StreamHandler(sys.stdout)]
     )
-    run_chunking()
+    try:
+        run_chunking()
+    except Exception:
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(1)

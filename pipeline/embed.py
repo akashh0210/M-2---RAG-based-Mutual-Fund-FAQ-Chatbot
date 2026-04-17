@@ -13,6 +13,7 @@ import json
 import logging
 import os
 import sys
+import traceback
 from typing import List, Optional
 
 from tqdm import tqdm
@@ -116,4 +117,8 @@ if __name__ == "__main__":
         level=logging.INFO,
         handlers=[logging.StreamHandler(sys.stdout)]
     )
-    run_embedding()
+    try:
+        run_embedding()
+    except Exception:
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(1)
