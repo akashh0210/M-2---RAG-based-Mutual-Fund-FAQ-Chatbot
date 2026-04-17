@@ -14,72 +14,97 @@ jobs:
     name: Fetch, Scrape, Chunk, and Embed
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       # ── 1. Checkout ─────────────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Python setup ─────────────────────────────────────────────────────
+      # ── 2. System dependencies ─────────────────────────────────────────────
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2t64
+
+      # ── 3. Python setup ─────────────────────────────────────────────────────
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
 
-      # ── 3. Install Python dependencies ─────────────────────────────────────
+      # ── 4. Install Python dependencies ─────────────────────────────────────
       - name: Install Python dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      # ── 4. Install Playwright Chromium (for Angular SPA pages) ──────────────
+      # ── 5. Install Playwright Chromium (for Angular SPA pages) ──────────────
       - name: Install Playwright Chromium
         run: |
-          playwright install chromium
-          playwright install-deps chromium
+          npx playwright install chromium --with-deps
 
-      # ── 5. Scraping service ─────────────────────────────────────────────────
+      # ── 6. Scraping service ─────────────────────────────────────────────────
       # Fetches all 20 approved URLs in crawl-priority order (P1 → P2 → P3 → P4)
       # Strips nav/footer/banners, runs PII guard, computes SHA-256 content hash
       - name: Run scraping service
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
+          CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
+          CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
           INGEST_RUN_ID: ${{ github.run_id }}
         run: |
           python -m pipeline.scrape
 
-      # ── 6. Chunking service ─────────────────────────────────────────────────
+      # ── 7. Chunking service ─────────────────────────────────────────────────
       # Splits cleaned text by page type, deduplicates via content hash,
       # writes chunks to source_chunks with embedding_status = pending
       - name: Run chunking service
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
+          CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
+          CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
           INGEST_RUN_ID: ${{ github.run_id }}
         run: |
           python -m pipeline.chunk
 
-      # ── 7. Embedding service ────────────────────────────────────────────────
+      # ── 8. Embedding service ────────────────────────────────────────────────
       # Embeds only pending chunks; skips unchanged chunks to reduce API cost
       # Falls back to local all-MiniLM-L6-v2 if OpenAI API is unavailable
       - name: Run embedding service
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
+          CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
+          CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
           INGEST_RUN_ID: ${{ github.run_id }}
         run: |
           python -m pipeline.embed
 
-      # ── 8. Finalize run ─────────────────────────────────────────────────────
+      # ── 9. Finalize run ─────────────────────────────────────────────────────
       # Updates source_documents crawl status, writes scraping_logs run record
       - name: Finalize run
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
+          CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
+          CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
           INGEST_RUN_ID: ${{ github.run_id }}
         run: |
           python -m pipeline.finalize
 
-      # ── 9. Upload crawl log artifact ────────────────────────────────────────
+      # ── 10. Upload crawl log artifact ────────────────────────────────────────
       - name: Upload crawl log
         if: always()
         uses: actions/upload-artifact@v4
@@ -88,7 +113,7 @@ jobs:
           path: data/logs/
           retention-days: 30
 
-      # ── 10. Failure notification ─────────────────────────────────────────────
+      # ── 11. Failure notification ─────────────────────────────────────────────
       - name: Notify on failure
         if: failure()
         run: |
