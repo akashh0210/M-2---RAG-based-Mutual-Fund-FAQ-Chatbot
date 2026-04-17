@@ -21,11 +21,15 @@ jobs:
           python-version: '3.12'
           cache: 'pip'
 
-      - name: Install dependencies
+     - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          playwright install --with-deps chromium
+          # Manually install the updated alsa library for Ubuntu 24.04 compatibility
+          sudo apt-get update
+          sudo apt-get install -y libasound2t64
+          # Install playwright browsers
+          npx playwright install chromium
 
       - name: Run Ingestion Pipeline
         env:
