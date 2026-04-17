@@ -164,6 +164,28 @@ def init_db(conn) -> None:
         )
     """)
 
+    # ── scraping_logs ─────────────────────────────────────────────────────────
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS scraping_logs (
+            log_id            TEXT PRIMARY KEY,
+            run_id            TEXT NOT NULL,
+            run_triggered_by  TEXT NOT NULL,
+            run_at            TEXT NOT NULL,
+            source_id         TEXT NOT NULL,
+            url               TEXT NOT NULL,
+            crawl_priority    INTEGER NOT NULL,
+            http_status       INTEGER,
+            fetch_method      TEXT NOT NULL,
+            source_status     TEXT NOT NULL,
+            chunk_count       INTEGER DEFAULT 0,
+            content_changed   INTEGER DEFAULT 0,
+            pii_alert         INTEGER DEFAULT 0,
+            pii_alert_types   TEXT,
+            duration_ms       INTEGER,
+            error_message     TEXT
+        )
+    """)
+
     conn.commit()
 
     # ── MIGRATION: Add 'embedding' to source_chunks if it doesn't exist (SQLite) ─

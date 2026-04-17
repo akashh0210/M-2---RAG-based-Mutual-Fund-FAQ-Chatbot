@@ -88,6 +88,9 @@ def run_daily_scrape() -> None:
     logger.info("Scraping run started | run_id=%s | triggered_by=%s", RUN_ID, RUN_TRIGGERED_BY)
     logger.info("=" * 70)
 
+    # Core system checks before processing
+    _ensure_browser_installed()
+
     conn = get_connection()
     init_db(conn)
 
@@ -299,6 +302,24 @@ def _fetch_with_playwright(url: str) -> tuple[str, int]:
             browser.close()
 
     return html, http_status
+
+
+def _ensure_browser_installed() -> None:
+    """Check if Playwright chromium is installed, install if missing."""
+    if not os.environ.get("GITHUB_ACTIONS"):
+        logger.debug("Local environment — assuming playwright is managed manually")
+        return
+
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        logger.warning("Playwright not installed. Attempting installation...")
+        os.system(f"{sys.executable} -m pip install playwright")
+        from playwright.sync_api import sync_playwright
+
+    logger.info("Ensuring Playwright Chromium is present for CI...")
+    # This runs regardless of check to be safe in CI, as it's fast if already there
+    os.system(f"{sys.executable} -m playwright install chromium --with-deps")
 
 
 # ── Text extraction ───────────────────────────────────────────────────────────
