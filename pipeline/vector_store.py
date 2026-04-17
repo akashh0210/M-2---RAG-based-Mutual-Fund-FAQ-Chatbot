@@ -28,6 +28,12 @@ CHROMA_DATABASE = (os.getenv("CHROMA_DATABASE") or "default").strip()
 
 class VectorStore:
     def __init__(self):
+        # ── Debug Statements ──────────────────────────────────────────────────
+        print(f"DEBUG: CHROMA_TENANT type: {type(os.getenv('CHROMA_TENANT'))}")
+        print(f"DEBUG: CHROMA_TENANT length: {len(os.getenv('CHROMA_TENANT', '').strip())}")
+        print(f"DEBUG: Environment keys available: {[k for k in os.environ.keys() if 'CHROMA' in k]}")
+        # ──────────────────────────────────────────────────────────────────────
+
         if not CHROMA_API_KEY:
             msg = "CRITICAL ERROR: CHROMA_API_KEY is empty or missing after stripping whitespace."
             logger.error(msg)
