@@ -1,3 +1,12 @@
+---
+title: Mutual Funds AI
+emoji: 📈
+colorFrom: green
+colorTo: emerald
+sdk: docker
+pinned: false
+---
+
 # SBI Mutual Fund — Facts-Only RAG FAQ Assistant
    
 **Product context:** Groww (UX reference)
