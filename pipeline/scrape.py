@@ -42,7 +42,7 @@ MAX_RETRIES = 3
 REQUEST_TIMEOUT = 20        # seconds
 PLAYWRIGHT_TIMEOUT = 15_000 # milliseconds
 
-RUN_ID = os.environ.get("INGEST_RUN_ID", str(uuid.uuid4()))
+# RUN_ID is fetched dynamically in run_daily_scrape to ensure orchestrator consistency
 RUN_TRIGGERED_BY = "scheduler" if os.environ.get("GITHUB_ACTIONS") else "manual"
 
 LOG_DIR = "data/logs"
@@ -53,7 +53,7 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler(f"{LOG_DIR}/scrape_{RUN_ID}.log", encoding="utf-8"),
+        logging.FileHandler(f"{LOG_DIR}/scrape_{os.environ.get('INGEST_RUN_ID', 'init')}.log", encoding="utf-8"),
     ],
 )
 logger = logging.getLogger("pipeline.scrape")
@@ -84,8 +84,9 @@ _STRIP_CLASSES_RE = re.compile(
 
 def run_daily_scrape() -> None:
     """Execute the full scraping pipeline over all approved URLs."""
+    run_id = os.environ.get("INGEST_RUN_ID", "local-run")
     logger.info("=" * 70)
-    logger.info("Scraping run started | run_id=%s | triggered_by=%s", RUN_ID, RUN_TRIGGERED_BY)
+    logger.info("Scraping run started | run_id=%s | triggered_by=%s", run_id, RUN_TRIGGERED_BY)
     logger.info("=" * 70)
 
     # Core system checks before processing
@@ -112,7 +113,7 @@ def run_daily_scrape() -> None:
     )
 
     conn.close()
-    _write_run_summary(summary)
+    _write_run_summary(summary, run_id)
 
 
 # ── Per-URL scraping ──────────────────────────────────────────────────────────
@@ -192,18 +193,18 @@ def _scrape_one(conn, entry: dict) -> dict:
         if content_changed:
             _save_raw_text(source_id, raw_text, entry)
             logger.info(
-                "  ✓ %s | http=%d | chars=%d | changed=%s | pii=%s",
+                "  [OK] %s | http=%d | chars=%d | changed=%s | pii=%s",
                 source_id, http_status, len(raw_text), content_changed, pii_alert,
             )
         else:
-            logger.info("  → %s | UNCHANGED (hash match — skipping re-chunk)", source_id)
+            logger.info("  -> %s | UNCHANGED (hash match — skipping re-chunk)", source_id)
 
     except Exception as exc:
         error_message = str(exc)
         http_status = http_status or 0
         outcome = "failed"
         status = "failed"
-        logger.error("  ✗ %s | error=%s", source_id, error_message)
+        logger.error("  [ERR] %s | error=%s", source_id, error_message)
 
         # Still upsert with failed status so the log is complete
         upsert_source_document(conn, {
@@ -227,7 +228,7 @@ def _scrape_one(conn, entry: dict) -> dict:
 
     write_scraping_log(conn, {
         "log_id": str(uuid.uuid4()),
-        "run_id": RUN_ID,
+        "run_id": os.environ.get("INGEST_RUN_ID", "local-run"),
         "run_triggered_by": RUN_TRIGGERED_BY,
         "run_at": _now_iso(),
         "source_id": source_id,
@@ -395,11 +396,11 @@ def _save_raw_text(source_id: str, text: str, entry: dict) -> None:
     logger.debug("  Raw text saved → %s", filepath)
 
 
-def _write_run_summary(summary: dict) -> None:
+def _write_run_summary(summary: dict, run_id: str) -> None:
     """Write a JSON summary of the run to data/logs/."""
-    path = f"{LOG_DIR}/run_summary_{RUN_ID}.json"
+    path = f"{LOG_DIR}/run_summary_{run_id}.json"
     with open(path, "w", encoding="utf-8") as f:
-        json.dump({"run_id": RUN_ID, "run_at": _now_iso(), **summary}, f, indent=2)
+        json.dump({"run_id": run_id, "run_at": _now_iso(), **summary}, f, indent=2)
     logger.info("Run summary written → %s", path)
 
 

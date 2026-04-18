@@ -14,6 +14,7 @@ import os
 import sys
 import re
 import traceback
+from typing import Optional
 from datetime import datetime, timezone
 
 from pipeline.models import get_connection

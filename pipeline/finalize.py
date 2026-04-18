@@ -21,8 +21,6 @@ from datetime import datetime, timezone
 
 from pipeline.models import get_connection, write_scraping_log
 
-RUN_ID = os.environ.get("INGEST_RUN_ID", "local")
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
@@ -32,6 +30,7 @@ logger = logging.getLogger("pipeline.finalize")
 
 
 def finalize_run() -> None:
+    run_id = os.environ.get("INGEST_RUN_ID", "local")
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -46,7 +45,7 @@ def finalize_run() -> None:
             SUM(chunk_count)                        AS total_chunks
         FROM scraping_logs
         WHERE run_id = ?
-    """, (RUN_ID,))
+    """, (run_id,))
 
     row = cursor.fetchone()
     stats = dict(row) if row else {}
@@ -59,13 +58,13 @@ def finalize_run() -> None:
             SELECT source_id FROM scraping_logs
             WHERE run_id = ? AND source_status IN ('updated', 'unchanged')
         )
-    """, (_now_iso(), RUN_ID))
+    """, (_now_iso(), run_id))
 
     conn.commit()
 
     # ── Summary ───────────────────────────────────────────────────────────────
     logger.info("=" * 60)
-    logger.info("Pipeline run FINALIZED | run_id=%s", RUN_ID)
+    logger.info("Pipeline run FINALIZED | run_id=%s", run_id)
     logger.info("  Total URLs  : %s", stats.get("total", "?"))
     logger.info("  Success     : %s", stats.get("success", "?"))
     logger.info("  Failed      : %s", stats.get("failed", 0))
