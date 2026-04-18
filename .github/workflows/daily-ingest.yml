@@ -42,7 +42,57 @@ jobs:
           pip install -r requirements.txt
           npx playwright install chromium --with-deps
 
-      # ── 5. Run full ingestion pipeline ───────────────────────────────────
+      # ── 5. Pre-flight: Verify secrets are loaded ──────────────────────────
+      - name: Verify secrets (pre-flight check)
+        env:
+          CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
+          CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
+          CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          python -c "
+          import os, sys
+          secrets = {
+              'CHROMA_API_KEY': os.getenv('CHROMA_API_KEY', ''),
+              'CHROMA_TENANT': os.getenv('CHROMA_TENANT', ''),
+              'CHROMA_DATABASE': os.getenv('CHROMA_DATABASE', ''),
+              'GROQ_API_KEY': os.getenv('GROQ_API_KEY', ''),
+          }
+          all_ok = True
+          for name, val in secrets.items():
+              stripped = val.strip()
+              status = f'OK (len={len(stripped)})'
+              if not stripped:
+                  status = 'MISSING OR EMPTY'
+                  all_ok = False
+              elif stripped != val:
+                  status = f'HAS WHITESPACE (raw={len(val)}, stripped={len(stripped)})'
+              print(f'  {name}: {status}')
+          if not all_ok:
+              print('::error::One or more secrets are missing. Check Settings > Secrets.')
+              sys.exit(1)
+          print('All secrets verified.')
+          "
+
+      # ── 6. Pre-flight: Chroma Cloud heartbeat ────────────────────────────
+      - name: Test Chroma Cloud connection
+        env:
+          CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
+          CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
+          CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
+        run: |
+          python -c "
+          import os, chromadb
+          tenant = os.getenv('CHROMA_TENANT', '').strip()
+          database = os.getenv('CHROMA_DATABASE', '').strip()
+          api_key = os.getenv('CHROMA_API_KEY', '').strip()
+          print(f'Connecting: tenant={tenant[:8]}..., db={database}')
+          client = chromadb.CloudClient(tenant=tenant, database=database, api_key=api_key)
+          print(f'Heartbeat: {client.heartbeat()}')
+          print('Chroma Cloud connection OK')
+          "
+
+      # ── 7. Run full ingestion pipeline ───────────────────────────────────
       # The orchestrator runs: Scrape -> Fact Extract -> Chunk -> Embed -> Finalize
       - name: Run Ingestion Pipeline
         env:
