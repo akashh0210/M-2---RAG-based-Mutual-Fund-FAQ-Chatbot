@@ -25,8 +25,11 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-DB_PATH = Path(__file__).parent.parent / "data" / "rag.db"
-DATABASE_URL = os.environ.get("DATABASE_URL", "")  # empty → use SQLite
+DB_PATH_DEFAULT = Path(__file__).parent.parent / "data" / "rag.db"
+DB_PATH_ENV = os.environ.get("RAG_DATABASE_PATH")
+DB_PATH = Path(DB_PATH_ENV) if DB_PATH_ENV else DB_PATH_DEFAULT
+
+DATABASE_URL = os.environ.get("DATABASE_URL", "")  # fallback to SQLite if empty
 
 
 def mask_url(url: str) -> str:
