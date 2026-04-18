@@ -1,5 +1,5 @@
 # SBI Mutual Fund — Facts-Only RAG FAQ Assistant
-
+   
 **Product context:** Groww (UX reference)
 **AMC:** SBI Mutual Fund
 **Schemes:** SBI Large Cap · SBI Flexicap · SBI ELSS Tax Saver · SBI Equity Hybrid
