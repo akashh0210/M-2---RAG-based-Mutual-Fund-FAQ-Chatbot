@@ -28,6 +28,33 @@ pinned: false
 | 7 | API — FastAPI Backend + Multi-Thread Support | ✅ Complete |
 | 8 | UI — Groww-Style Minimal Chat Interface | ✅ Complete |
 | 9 | QA — Evaluation + Refusal Testing + Citation Validation | ✅ Complete |
+| 10 | Deployment — Vercel + Hugging Face Spaces | ✅ Complete |
+
+---
+
+## Tech Stack
+
+### Frontend
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Vanilla CSS (Groww-inspired Design System)
+- **Deployment**: Vercel
+
+### Backend
+- **Framework**: FastAPI (Python 3.11)
+- **Deployment**: Hugging Face Spaces (Docker SDK) / 16GB RAM
+- **Infrastructure**: Docker
+
+### RAG & AI
+- **LLM**: Groq (Llama 3.3 70B)
+- **Embeddings**: BAAI/bge-base-en-v1.5 (768-dim)
+- **Vector DB**: Chroma Cloud (Persistent)
+- **Session DB**: SQLite (Thread-based state)
+
+### Data & Automation
+- **Extraction**: Playwright (Headless Chromium)
+- **Ingestion**: Custom Python Pipeline
+- **Orchestration**: GitHub Actions (Daily Refresh)
 
 ---
 
