@@ -2,7 +2,7 @@
 title: Mutual Funds AI
 emoji: 📈
 colorFrom: green
-colorTo: emerald
+colorTo: green
 sdk: docker
 pinned: false
 ---
