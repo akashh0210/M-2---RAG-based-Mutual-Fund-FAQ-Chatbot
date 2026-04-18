@@ -27,7 +27,7 @@ class RetrievalResult(BaseModel):
 # ── Service Class ─────────────────────────────────────────────────────────────
 
 class Retriever:
-    def __init__(self, db_path: str = "data/rag.db", model_name: str = "BAAI/bge-base-en-v1.5"):
+    def __init__(self, db_path: str = "data/rag.db", model_name: str = "all-MiniLM-L6-v2"):
         self.db_path = db_path
         self.vs = get_vector_store()
         logger.info("Loading embedding model for retrieval: %s", model_name)

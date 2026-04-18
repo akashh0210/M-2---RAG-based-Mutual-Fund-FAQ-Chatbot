@@ -21,11 +21,12 @@ The RAG Data Pipeline requires a periodic scheduler to scrape the SBI MF knowled
 
 ## 2. RAG Back-End & API Engine (Render)
 
-The FastAPI server acts as the core orchestration layer, receiving user queries, retrieving semantic context from ChromaDB, generating LLM responses via Groq, and returning structured data to the client.
+The FastAPI server acts as the core orchestration layer.
 
 *   **Platform:** Render (Web Service)
-*   **Runtime:** Python 3.11+
-*   **Build Command:** `pip install -r requirements.txt` (Ensure all core and pipeline dependencies are present)
+*   **Runtime:** Python 3.11.9 (Locked via `PYTHON_VERSION` to avoid build failures)
+*   **Model:** `all-MiniLM-L6-v2` (Optimized for 512MB RAM)
+*   **Build Command:** `pip install -r requirements.txt`
 *   **Start Command:** `uvicorn main:app --host 0.0.0.0 --port 10000`
 *   **State Management:**
     *   Render ephemeral disks will wipe local SQLite data (`data/rag.db`) upon restart.

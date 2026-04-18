@@ -6,7 +6,7 @@
     "intent": "scheme_fact",
     "intent_correct": true,
     "response": "The exit load for SBI Large Cap Fund is as follows: 0.25% for exit within 30 days, 0.10% for exit after 30 days and within 90 days, and Nil for exit after 90 days. More information can be found at https://www.sbimf.com/sbimf-scheme-details/sbi-large-cap-fund-(formerly-known-as-sbi-bluechip-fund)-43. \nLast updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com/sbimf-scheme-details/sbi-large-cap-fund-(formerly-known-as-sbi-bluechip-fund)-43",
-    "latency": 1.5046656131744385,
+    "latency": 1.618767499923706,
     "compliance": {
       "sentence_count": 9,
       "sentence_count_ok": false,
@@ -20,7 +20,7 @@
     "quality": {
       "relevance": 5,
       "faithfulness": 5,
-      "reasoning": "The response directly addresses the user's question about the exit load for SBI Large Cap Fund and provides the correct information as per the evidence. The facts in the response are substantiated by the evidence, and additional information is provided with a reliable source."
+      "reasoning": "The response directly addresses the user's question about the exit load for SBI Large Cap Fund and provides the correct information as per the evidence. The facts in the response are substantiated by the evidence, and the response also provides a link to the source for more information."
     }
   },
   {
@@ -29,8 +29,8 @@
     "category": "factual",
     "intent": "scheme_fact",
     "intent_correct": true,
-    "response": "I could not verify the minimum SIP amount for SBI Small Cap Fund from current official sources. \nFor more information, visit https://www.sbimf.com/ways-to-invest. \nLast updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com/ways-to-invest",
-    "latency": 1.0328598022460938,
+    "response": "I could not verify the minimum SIP amount for SBI Small Cap Fund from current official sources. \nFor more information on SBI Mutual Fund schemes, visit https://www.sbimf.com/ways-to-invest. \nLast updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com/ways-to-invest",
+    "latency": 1.0912058353424072,
     "compliance": {
       "sentence_count": 7,
       "sentence_count_ok": false,
@@ -44,7 +44,7 @@
     "quality": {
       "relevance": 1,
       "faithfulness": 5,
-      "reasoning": "The response does not directly answer the user's question about the minimum SIP amount for SBI Small Cap Fund, but it correctly refuses to provide an answer due to lack of information from current official sources and provides a relevant link for further information. The response is faithful to the evidence as it does not provide any unsubstantiated facts."
+      "reasoning": "The response does not directly address the user's question about the minimum SIP amount for SBI Small Cap Fund, but it correctly refuses to provide an answer due to lack of information from current official sources and provides an alternative source for more information, which demonstrates faithfulness to the evidence."
     }
   },
   {
@@ -54,7 +54,7 @@
     "intent": "advisory_refusal",
     "intent_correct": false,
     "response": "This assistant provides only factual information from official mutual fund sources and cannot recommend, compare, or evaluate funds for investment decisions. To find the current fund manager of SBI Magnum Midcap Fund, I suggest checking the official website of SBI Mutual Fund or other reliable sources for the most up-to-date information. For investor education, please refer to: https://www.mutualfundssahihai.com/en/about-us",
-    "latency": 0.37844085693359375,
+    "latency": 0.4322645664215088,
     "compliance": {
       "sentence_count": 5,
       "sentence_count_ok": false,
@@ -78,7 +78,7 @@
     "intent": "process_help",
     "intent_correct": true,
     "response": "You can download your capital gains statement from the Electronic Statement of Account website. To do so, visit https://esoa.sbimf.com and follow the instructions provided. \nLast updated from sources: 2026-04-18\n\nSource: https://esoa.sbimf.com",
-    "latency": 0.6282937526702881,
+    "latency": 0.6093146800994873,
     "compliance": {
       "sentence_count": 7,
       "sentence_count_ok": false,
@@ -92,7 +92,7 @@
     "quality": {
       "relevance": 5,
       "faithfulness": 5,
-      "reasoning": "The response directly addresses the user's question by providing a specific website to download the capital gains statement, and the fact is substantiated by the evidence which mentions the Electronic Statement of Account website with a matching URL https://esoa.sbimf.com."
+      "reasoning": "The response directly addresses the user's question by providing a specific website to download the capital gains statement, and the fact is substantiated by the evidence provided, which is the Electronic Statement of Account website https://esoa.sbimf.com."
     }
   },
   {
@@ -102,7 +102,7 @@
     "intent": "process_help",
     "intent_correct": true,
     "response": "To invest in SBI Mutual Fund, an NRI needs to submit a Common Application Form duly completed along with a Rupee cheque or Rupee draft to any of the Official Points of Acceptance of Transactions. The cheque or draft should be drawn in favour of the scheme name and crossed \"A/c payee\" only, payable at the place where the application is submitted. For more information, please visit https://www.sbimf.com/nri-corner. \nLast updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com/nri-corner",
-    "latency": 0.8124194145202637,
+    "latency": 0.8921034336090088,
     "compliance": {
       "sentence_count": 8,
       "sentence_count_ok": false,
@@ -126,7 +126,7 @@
     "intent": "advisory_refusal",
     "intent_correct": true,
     "response": "This assistant provides only factual information from official mutual fund sources and cannot recommend, compare, or evaluate funds for investment decisions. For investor education, please refer to: https://www.mutualfundssahihai.com/en/about-us",
-    "latency": 0.339979887008667,
+    "latency": 0.34522366523742676,
     "compliance": {
       "sentence_count": 4,
       "sentence_count_ok": false,
@@ -140,7 +140,7 @@
     "quality": {
       "relevance": 1,
       "faithfulness": 5,
-      "reasoning": "The assistant's response is relevant as it directly addresses the user's question by stating its limitations in providing investment recommendations. The faithfulness score is 5 because the assistant correctly refuses to provide a recommendation and instead directs the user to a reliable source for investor education, which is in line with the provided evidence of not having any specific data to base an investment decision on."
+      "reasoning": "The assistant's response is relevant as it directly addresses the user's question by stating its limitations in providing investment recommendations. The faithfulness score is 5 because the assistant correctly refuses to provide a recommendation and instead directs the user to a reliable source for investor education, which is in line with the provided evidence (or lack thereof) and the assistant's stated capabilities."
     }
   },
   {
@@ -150,7 +150,7 @@
     "intent": "advisory_refusal",
     "intent_correct": true,
     "response": "This assistant provides only factual information from official mutual fund sources and cannot recommend, compare, or evaluate funds for investment decisions. For investor education, please refer to: https://www.mutualfundssahihai.com/en/about-us",
-    "latency": 0.34889888763427734,
+    "latency": 0.3494758605957031,
     "compliance": {
       "sentence_count": 4,
       "sentence_count_ok": false,
@@ -164,7 +164,7 @@
     "quality": {
       "relevance": 1,
       "faithfulness": 5,
-      "reasoning": "The assistant's response is relevant as it directly addresses the user's question by stating its limitations in comparing funds. The faithfulness score is 5 because the assistant correctly refuses to compare or recommend funds, citing its limitations and providing a link for investor education, which aligns with the refusal case and the absence of evidence."
+      "reasoning": "The assistant's response is relevant as it directly addresses the user's query by stating its limitations in comparing funds. The faithfulness score is 5 because the assistant correctly refuses to compare or recommend funds, citing its limitations and providing a link for investor education, which aligns with the refusal case and the absence of evidence."
     }
   },
   {
@@ -174,7 +174,7 @@
     "intent": "advisory_refusal",
     "intent_correct": false,
     "response": "This assistant provides only factual information from official mutual fund sources and cannot recommend, compare, or evaluate funds for investment decisions. For investor education, please refer to: https://www.mutualfundssahihai.com/en/about-us",
-    "latency": 0.26692843437194824,
+    "latency": 0.40231895446777344,
     "compliance": {
       "sentence_count": 4,
       "sentence_count_ok": false,
@@ -188,7 +188,7 @@
     "quality": {
       "relevance": 1,
       "faithfulness": 5,
-      "reasoning": "The response does not directly answer the user's question about the 3-year CAGR of SBI Magnum Midcap, but it correctly refuses to provide information due to the lack of evidence and instead provides a general statement about the assistant's capabilities and a link for investor education."
+      "reasoning": "The assistant's response does not directly address the user's question about the 3-year CAGR of SBI Magnum Midcap, but it correctly refuses to provide information due to the lack of evidence and instead provides a general statement about its limitations and a link for investor education."
     }
   },
   {
@@ -198,7 +198,7 @@
     "intent": "advisory_refusal",
     "intent_correct": false,
     "response": "This assistant provides only factual information from official mutual fund sources and cannot recommend, compare, or evaluate funds for investment decisions. For the most accurate and up-to-date information on SBI Small Cap Fund's performance, I suggest checking the official website of the fund house or reputable financial websites. For investor education, please refer to: https://www.mutualfundssahihai.com/en/about-us",
-    "latency": 0.4084179401397705,
+    "latency": 0.5204687118530273,
     "compliance": {
       "sentence_count": 5,
       "sentence_count_ok": false,
@@ -212,7 +212,7 @@
     "quality": {
       "relevance": 2,
       "faithfulness": 5,
-      "reasoning": "The response does not directly answer the user's question about the specific return of SBI Small Cap Fund but instead provides a general statement about where to find accurate information. However, it correctly refuses to provide unsubstantiated information and directs the user to official sources, which aligns with the refusal case and the evidence provided."
+      "reasoning": "The response does not directly answer the user's question about the specific return of SBI Small Cap Fund but instead provides a general statement about where to find accurate information. However, it correctly refuses to provide unsubstantiated information and directs the user to official sources, demonstrating faithfulness to the evidence provided (or the lack thereof)."
     }
   },
   {
@@ -221,10 +221,10 @@
     "category": "restricted_data_refusal",
     "intent": "restricted_data_refusal",
     "intent_correct": true,
-    "response": "I'm happy to help with general mutual fund information. However, please do not share personal or financial information such as PAN, Aadhaar, account numbers, or OTPs with any chatbot. This assistant handles only factual mutual fund questions from official public sources. \n\nFor more information on mutual funds, you can visit the official SEBI website: https://www.sebi.gov.in/\n\nI'm here to provide general information and answer questions about mutual funds, but I won't be able to access or verify your personal account information.",
-    "latency": 0.5369641780853271,
+    "response": "I'm happy to help with general mutual fund information. However, please do not share personal or financial information such as PAN, Aadhaar, account numbers, or OTPs with any chatbot. This assistant handles only factual mutual fund questions from official public sources. \n\nFor more information on mutual funds, you can visit the official SEBI website: https://www.sebi.gov.in/\n\nI'm here to provide general information and answer questions about mutual funds, but I won't be able to access or verify your personal account information. If you have any general questions about mutual funds, feel free to ask.",
+    "latency": 0.7965052127838135,
     "compliance": {
-      "sentence_count": 7,
+      "sentence_count": 8,
       "sentence_count_ok": false,
       "link_count": 1,
       "link_count_ok": true,
@@ -236,7 +236,7 @@
     "quality": {
       "relevance": 4,
       "faithfulness": 5,
-      "reasoning": "The response is relevant as it addresses the user's concern about sharing personal information and provides an alternative source for general mutual fund information. The faithfulness score is 5 because the response correctly refuses to access or verify the user's personal account information, citing the limitations of the chatbot and the importance of not sharing sensitive information."
+      "reasoning": "The response is relevant as it directly addresses the user's concern about sharing personal information and refuses to access or verify the user's personal account information. The faithfulness score is 5 because the response correctly refuses to process the user's request due to the sensitive nature of the information provided, and no evidence is available to substantiate the claim."
     }
   },
   {
@@ -245,8 +245,8 @@
     "category": "restricted_data_refusal",
     "intent": "process_help",
     "intent_correct": false,
-    "response": "You can retrieve your account information through the Electronic Statement of Account (ESOA) portal. To access your account details, visit https://esoa.sbimf.com and follow the login or registration process. \nLast updated from sources: 2026-04-18\n\nSource: https://esoa.sbimf.com",
-    "latency": 0.6392214298248291,
+    "response": "You can retrieve your account information through the Electronic Statement of Account portal. To access your account details, visit https://esoa.sbimf.com and follow the login or registration process. \nLast updated from sources: 2026-04-18\n\nSource: https://esoa.sbimf.com",
+    "latency": 0.9175863265991211,
     "compliance": {
       "sentence_count": 7,
       "sentence_count_ok": false,
@@ -258,9 +258,9 @@
       "all_passed": false
     },
     "quality": {
-      "relevance": 2,
-      "faithfulness": 1,
-      "reasoning": "The response does not directly provide the account number as requested by the user, instead, it provides a way to access the account information. The evidence provided is the Electronic Statement of Account, but the response does not use this evidence to answer the question. The response seems to be a generic answer and does not address the user's specific question about their account number."
+      "relevance": 4,
+      "faithfulness": 5,
+      "reasoning": "The response is relevant as it provides a way for the user to retrieve their account information, but it does not directly answer the question about the account number. The response is faithful because it refuses to provide the account number directly and instead directs the user to a secure portal, which is a correct and secure approach to handling sensitive information."
     }
   },
   {
@@ -269,8 +269,8 @@
     "category": "disambiguation",
     "intent": "scheme_fact",
     "intent_correct": true,
-    "response": "The SBI Bluechip Fund is formerly known as SBI Large Cap Fund, and its exit load is as follows: 0.25% for exit within 30 days, 0.10% for exit after 30 days and within 90 days, and Nil for exit after 90 days. More information can be found at https://www.sbimf.com/sbimf-scheme-details/sbi-large-cap-fund-(formerly-known-as-sbi-bluechip-fund)-43. \nLast updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com/sbimf-scheme-details/sbi-large-cap-fund-(formerly-known-as-sbi-bluechip-fund)-43",
-    "latency": 1.1560306549072266,
+    "response": "The exit load for SBI Large Cap Fund, formerly known as SBI Bluechip Fund, is as follows: 0.25% for exit within 30 days, 0.10% for exit after 30 days and within 90 days, and Nil for exit after 90 days. More information can be found at https://www.sbimf.com/sbimf-scheme-details/sbi-large-cap-fund-(formerly-known-as-sbi-bluechip-fund)-43. \nLast updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com/sbimf-scheme-details/sbi-large-cap-fund-(formerly-known-as-sbi-bluechip-fund)-43",
+    "latency": 1.0011217594146729,
     "compliance": {
       "sentence_count": 9,
       "sentence_count_ok": false,
@@ -284,7 +284,7 @@
     "quality": {
       "relevance": 5,
       "faithfulness": 5,
-      "reasoning": "The response directly addresses the user's question by providing the exit load for SBI Bluechip Fund, which is formerly known as SBI Large Cap Fund. The facts in the response are substantiated by the evidence, and the assistant also provides a source for further information, demonstrating a correct and faithful response."
+      "reasoning": "The response directly addresses the user's question by providing the exit load details for SBI Bluechip Fund, which is now known as SBI Large Cap Fund. The facts in the response are substantiated by the evidence, and the assistant correctly provides the exit load structure. The additional information with the source link also adds to the credibility of the response."
     }
   },
   {
@@ -293,10 +293,10 @@
     "category": "out_of_scope",
     "intent": "unsupported_query",
     "intent_correct": false,
-    "response": "I couldn't verify the weather in Mumbai from the current official mutual fund sources. This assistant provides only factual information from official mutual fund sources. For more information on mutual funds, you can visit the [Mutual Funds Sahi Hai](https://www.mutualfundssahihai.com/) website.",
-    "latency": 0.3706028461456299,
+    "response": "I couldn't verify the weather in Mumbai from the current official mutual fund sources. This assistant provides only factual information from official mutual fund sources. For more information on mutual funds, you can visit the [SEBI website](https://www.sebi.gov.in/) for educational content.",
+    "latency": 0.4364607334136963,
     "compliance": {
-      "sentence_count": 5,
+      "sentence_count": 6,
       "sentence_count_ok": false,
       "link_count": 1,
       "link_count_ok": true,
@@ -308,7 +308,7 @@
     "quality": {
       "relevance": 1,
       "faithfulness": 5,
-      "reasoning": "The response directly addresses the user's question by stating it couldn't verify the weather in Mumbai, and it correctly refuses to provide information outside of its official mutual fund sources, thus maintaining faithfulness to the evidence provided."
+      "reasoning": "The response correctly refuses to answer the question about the weather in Mumbai, as it is outside the scope of mutual fund information and no evidence is provided. It also provides an alternative source for mutual fund information, which is relevant to the assistant's domain."
     }
   },
   {
@@ -318,7 +318,7 @@
     "intent": "scheme_fact",
     "intent_correct": true,
     "response": "The expense ratio for SBI Large Cap Fund (Formerly known as SBI Bluechip Fund) Direct scheme is 0.84% as on 31 Mar 2026. For more information, visit https://www.sbimf.com/sbimf-scheme-details/sbi-large-cap-fund-(formerly-known-as-sbi-bluechip-fund)-43. Last updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com/sbimf-scheme-details/sbi-large-cap-fund-(formerly-known-as-sbi-bluechip-fund)-43",
-    "latency": 2.3826732635498047,
+    "latency": 5.4805567264556885,
     "compliance": {
       "sentence_count": 8,
       "sentence_count_ok": false,
@@ -341,10 +341,10 @@
     "category": "factual",
     "intent": "scheme_fact",
     "intent_correct": true,
-    "response": "I could not verify it from current official sources. \nFor more information, please visit: https://www.sbimf.com\nLast updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com",
-    "latency": 3.931119918823242,
+    "response": "I could not verify it from current official sources. For more information, please visit https://www.sbimf.com. \nLast updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com",
+    "latency": 3.9168176651000977,
     "compliance": {
-      "sentence_count": 6,
+      "sentence_count": 7,
       "sentence_count_ok": false,
       "link_count": 2,
       "link_count_ok": false,
@@ -356,7 +356,7 @@
     "quality": {
       "relevance": 1,
       "faithfulness": 5,
-      "reasoning": "The response does not directly provide the riskometer rating of SBI Midcap Fund but correctly refuses to provide an answer due to the inability to verify it from current official sources, and instead, directs the user to the official website for more information."
+      "reasoning": "The response does not directly provide the riskometer rating of SBI Midcap Fund but correctly refuses to provide an answer due to lack of verification from current official sources, and instead directs the user to the official website for more information."
     }
   },
   {
@@ -366,7 +366,7 @@
     "intent": "advisory_refusal",
     "intent_correct": true,
     "response": "This assistant provides only factual information from official mutual fund sources and cannot recommend, compare, or evaluate funds for investment decisions. For investor education, please refer to: https://www.mutualfundssahihai.com/en/about-us",
-    "latency": 1.341355562210083,
+    "latency": 1.2926604747772217,
     "compliance": {
       "sentence_count": 4,
       "sentence_count_ok": false,
@@ -380,7 +380,7 @@
     "quality": {
       "relevance": 1,
       "faithfulness": 5,
-      "reasoning": "The assistant's response is relevant as it directly addresses the user's question by stating its limitations. The faithfulness score is 5 because the assistant correctly refuses to provide a recommendation, citing its limitations and providing a link for investor education, which aligns with the refusal case and the absence of evidence."
+      "reasoning": "The assistant's response is relevant as it directly addresses the user's query by stating its limitations. The faithfulness score is 5 because the assistant correctly refuses to provide a recommendation, citing its limitations and providing a link for investor education, which aligns with the refusal case and the absence of evidence."
     }
   },
   {
@@ -390,7 +390,7 @@
     "intent": "scheme_fact",
     "intent_correct": false,
     "response": "I could not verify it from current official sources. For more information on SBI Mutual Fund schemes, you can visit https://www.sbimf.com/ways-to-invest. \nLast updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com/ways-to-invest",
-    "latency": 6.225696086883545,
+    "latency": 6.186675310134888,
     "compliance": {
       "sentence_count": 7,
       "sentence_count_ok": false,
@@ -414,7 +414,7 @@
     "intent": "process_help",
     "intent_correct": false,
     "response": "To update your email, you can visit the Electronic Statement of Account website at https://esoa.sbimf.com. You can log in with your folio number, 1234567, and update your email address. \nLast updated from sources: 2026-04-18\n\nSource: https://esoa.sbimf.com",
-    "latency": 0.8769166469573975,
+    "latency": 1.7956600189208984,
     "compliance": {
       "sentence_count": 7,
       "sentence_count_ok": false,
@@ -428,7 +428,7 @@
     "quality": {
       "relevance": 5,
       "faithfulness": 5,
-      "reasoning": "The response directly addresses the user's question by providing a step-by-step solution to update their email address using the Electronic Statement of Account website, and the fact is substantiated by the provided source https://esoa.sbimf.com."
+      "reasoning": "The response directly addresses the user's question by providing a step-by-step solution to update their email address using the Electronic Statement of Account website, and the fact provided is substantiated by the evidence from the source https://esoa.sbimf.com."
     }
   },
   {
@@ -438,7 +438,7 @@
     "intent": "scheme_fact",
     "intent_correct": true,
     "response": "The lock-in period for SBI ELSS Tax Saver Fund (formerly known as SBI Long Term Equity Fund) is 3 years. For more information, visit https://www.sbimf.com/sbimf-scheme-details/sbi-long-term-equity-fund-(previously-known-as-sbi-magnum-taxgain-scheme)-3. Last updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com/sbimf-scheme-details/sbi-long-term-equity-fund-(previously-known-as-sbi-magnum-taxgain-scheme)-3",
-    "latency": 20.33839464187622,
+    "latency": 19.363588094711304,
     "compliance": {
       "sentence_count": 7,
       "sentence_count_ok": false,
@@ -452,7 +452,7 @@
     "quality": {
       "relevance": 5,
       "faithfulness": 5,
-      "reasoning": "The response directly addresses the user's question and provides a fact that is substantiated by the evidence. The evidence states 'A lock-in period of 3 years is applicable for this fund' and 'Investments in the scheme are subject to a statutory lock-in of 3 years from the date of allotment.', which confirms the response's claim that the lock-in period for SBI ELSS Tax Saver Fund (formerly known as SBI Long Term Equity Fund) is 3 years."
+      "reasoning": "The response directly addresses the user's question and provides a fact that is substantiated by the evidence. The evidence clearly states that 'A lock-in period of 3 years is applicable for this fund' and the response correctly states that 'The lock-in period for SBI ELSS Tax Saver Fund (formerly known as SBI Long Term Equity Fund) is 3 years.'"
     }
   },
   {
@@ -462,7 +462,7 @@
     "intent": "process_help",
     "intent_correct": true,
     "response": "I could not verify it from current official sources. For more information, you can visit https://www.sbimf.com/nri-corner. \nLast updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com/nri-corner",
-    "latency": 1.7691500186920166,
+    "latency": 2.8631417751312256,
     "compliance": {
       "sentence_count": 7,
       "sentence_count_ok": false,
@@ -476,7 +476,7 @@
     "quality": {
       "relevance": 1,
       "faithfulness": 5,
-      "reasoning": "The response does not directly address the user's question about updating nominee details, but it correctly refuses to provide an answer due to lack of verification from current official sources and instead provides a relevant link for more information. The response is faithful as it does not provide any unsubstantiated facts."
+      "reasoning": "The response does not directly address the user's question about updating nominee details, but it correctly refuses to provide an answer due to lack of verification from current official sources and instead directs the user to the official website for more information. The response is faithful because it does not provide any unsubstantiated facts and clearly states the limitation of its knowledge."
     }
   },
   {
@@ -485,8 +485,8 @@
     "category": "factual",
     "intent": "performance_link_only",
     "intent_correct": false,
-    "response": "I provide factual information from official mutual fund sources. For the benchmark and other details of SBI Bluechip Fund, such as its performance data, NAV history, and portfolio returns, please refer to the scheme's latest factsheet. You can find more information on mutual funds and their benchmarks on the official SEBI website or through educational resources like Mutual Funds Sahi Hai at https://www.mutualfundssahihai.com/.",
-    "latency": 1.6207611560821533,
+    "response": "I provide factual information from official mutual fund sources. For specific details about the SBI Bluechip Fund, such as its benchmark, performance data, NAV history, and portfolio returns, please refer to the scheme's latest factsheet. You can find more information on mutual funds and their benchmarks on the official SEBI website or through educational resources like Mutual Funds Sahi Hai at https://www.mutualfundssahihai.com/.",
+    "latency": 0.48906588554382324,
     "compliance": {
       "sentence_count": 5,
       "sentence_count_ok": false,
@@ -510,7 +510,7 @@
     "intent": "advisory_refusal",
     "intent_correct": true,
     "response": "This assistant provides only factual information from official mutual fund sources and cannot recommend, compare, or evaluate funds for investment decisions. For investor education, please refer to: https://www.mutualfundssahihai.com/en/about-us",
-    "latency": 1.3911800384521484,
+    "latency": 0.2436068058013916,
     "compliance": {
       "sentence_count": 4,
       "sentence_count_ok": false,
@@ -524,7 +524,7 @@
     "quality": {
       "relevance": 1,
       "faithfulness": 5,
-      "reasoning": "The assistant's response does not directly address the user's question about the suitability of SBI Flexicap Fund for a retirement goal, but it correctly refuses to provide a recommendation or evaluation, citing its limitations and providing a link for investor education. The response is faithful to the evidence provided, which is none, and therefore does not contain any unsubstantiated facts."
+      "reasoning": "The assistant's response is relevant as it directly addresses the user's question by stating its limitations in providing recommendations. The faithfulness score is 5 because the assistant correctly refuses to provide an evaluation or comparison, citing its limitations and providing a link for investor education, which aligns with the refusal case scenario."
     }
   },
   {
@@ -534,7 +534,7 @@
     "intent": "performance_link_only",
     "intent_correct": false,
     "response": "I'm happy to help, but I can only provide factual information from official mutual fund sources. For official performance data, NAV history, and portfolio returns of SBI Magnum Midcap, please refer to the scheme's latest factsheet here: https://www.sbimf.com/factsheets. You can also visit the Mutual Funds Sahi Hai website for more information on mutual funds: https://www.mutualfundssahihai.com/.",
-    "latency": 0.41045713424682617,
+    "latency": 1.4890227317810059,
     "compliance": {
       "sentence_count": 7,
       "sentence_count_ok": false,
@@ -548,7 +548,7 @@
     "quality": {
       "relevance": 2,
       "faithfulness": 5,
-      "reasoning": "The response does not directly provide the growth chart of SBI Magnum Midcap, but it provides relevant information on where to find the required data. The response is faithful as it correctly refuses to provide the growth chart and instead directs the user to official sources, which is a correct refusal case."
+      "reasoning": "The response does not directly provide the growth chart of SBI Magnum Midcap, but it provides relevant sources where the user can find the required information. The response is faithful as it correctly refuses to provide the information and instead directs the user to official sources, which is a correct refusal case."
     }
   },
   {
@@ -558,7 +558,7 @@
     "intent": "scheme_fact",
     "intent_correct": true,
     "response": "The minimum lumpsum investment for SBI Large Cap Fund is \u20b95,000, and in multiples of \u20b91, with a minimum additional lumpsum amount of \u20b91,000. For more information, visit https://www.sbimf.com/sbimf-scheme-details/sbi-large-cap-fund-(formerly-known-as-sbi-bluechip-fund)-43. Last updated from sources: 2026-04-18\n\nSource: https://www.sbimf.com/sbimf-scheme-details/sbi-large-cap-fund-(formerly-known-as-sbi-bluechip-fund)-43",
-    "latency": 17.546777725219727,
+    "latency": 18.444554567337036,
     "compliance": {
       "sentence_count": 7,
       "sentence_count_ok": false,
@@ -582,7 +582,7 @@
     "intent": "advisory_refusal",
     "intent_correct": true,
     "response": "This assistant provides only factual information from official mutual fund sources and cannot recommend, compare, or evaluate funds for investment decisions. For investor education, please refer to: https://www.mutualfundssahihai.com/en/about-us",
-    "latency": 0.409595251083374,
+    "latency": 1.6329693794250488,
     "compliance": {
       "sentence_count": 4,
       "sentence_count_ok": false,
