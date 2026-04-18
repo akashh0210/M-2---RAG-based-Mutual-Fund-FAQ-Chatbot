@@ -137,8 +137,10 @@ export default function Home() {
       setThreadId(newId);
       setMessages([]);
       localStorage.setItem("rag_active_thread_id", newId);
+      return newId;
     } catch (e) {
       console.error("Failed to create thread", e);
+      return null;
     }
   };
 
