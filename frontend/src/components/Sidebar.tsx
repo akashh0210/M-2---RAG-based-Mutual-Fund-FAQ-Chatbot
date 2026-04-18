@@ -4,10 +4,10 @@ import { Plus, MessageSquare, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
-  onNewThread: () => void;
+  onNewThread: () => void | Promise<any>;
   activeThreadId: string | null;
   threadHistory: { id: string, title: string, updatedAt: number }[];
-  onSelectThread: (id: string) => void;
+  onSelectThread: (id: string) => void | Promise<any>;
 }
 
 export default function Sidebar({ onNewThread, activeThreadId, threadHistory, onSelectThread }: SidebarProps) {

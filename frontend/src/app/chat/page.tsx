@@ -27,45 +27,22 @@ export default function Home() {
   const [selectedFundContext, setSelectedFundContext] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Initialize & Load Threads
-  useEffect(() => {
-    const savedThreads = JSON.parse(localStorage.getItem("rag_threads") || "[]") as ThreadMeta[];
-    setThreadHistory(savedThreads);
-
-    const init = async () => {
-      // Check if we are launching with an auto-query
-      const urlParams = new URLSearchParams(window.location.search);
-      const autoQuery = urlParams.get('q');
-
-      let currentThreadId = localStorage.getItem("rag_active_thread_id");
-
-      // Valid thread check or force new thread if auto-querying
-      if (currentThreadId && savedThreads.find(t => t.id === currentThreadId) && !autoQuery) {
-        await loadThread(currentThreadId);
-      } else {
-        currentThreadId = await handleNewThread();
-      }
-
-      // If auto auto-query exists, clear it from URL and send msg
-      if (autoQuery && currentThreadId) {
-        window.history.replaceState({}, '', '/chat'); // clean URL
-        // Delay slightly for React state to setup
-        setTimeout(() => {
-           triggerMessage(currentThreadId!, autoQuery, savedThreads);
-        }, 100);
-      }
-    };
-    init();
-  }, []);
-
-  // Auto-scroll
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  // Helper: Create new thread
+  async function handleNewThread(): Promise<string | null> {
+    try {
+      const newId = await api.createThread();
+      setThreadId(newId);
+      setMessages([]);
+      localStorage.setItem("rag_active_thread_id", newId);
+      return newId;
+    } catch (e) {
+      console.error("Failed to create thread", e);
+      return null;
     }
-  }, [messages, isLoading]);
+  }
 
-  const loadThread = async (id: string) => {
+  // Helper: Load specific thread
+  async function loadThread(id: string) {
     setThreadId(id);
     localStorage.setItem("rag_active_thread_id", id);
     try {
@@ -75,19 +52,20 @@ export default function Home() {
       console.error("Failed to fetch history:", e);
       setMessages([]);
     }
-  };
+  }
 
-  const updateThreadHistory = (id: string, newMessage: string) => {
+  // Helper: Update history list
+  function updateThreadHistory(id: string, newMessage: string) {
     setThreadHistory(prev => {
       const filtered = prev.filter(t => t.id !== id);
       const updated = [{ id, title: newMessage.substring(0, 30) + "...", updatedAt: Date.now() }, ...filtered].slice(0, 20);
       localStorage.setItem("rag_threads", JSON.stringify(updated));
       return updated;
     });
-  };
+  }
 
-  const triggerMessage = async (tid: string, query: string, curHistory: ThreadMeta[]) => {
-    // Inject fund context if selected
+  // Core: Processing message
+  async function triggerMessage(tid: string, query: string, curHistory: ThreadMeta[]) {
     const queryWithContext = selectedFundContext 
       ? `[Context: ${selectedFundContext}] ${query}` 
       : query;
@@ -119,30 +97,51 @@ export default function Home() {
       console.error("Send failed:", e);
       setMessages((prev) => [...prev, { 
         role: "assistant", 
-        content: "I'm sorry, I'm having trouble connecting to the service. Please make sure the backend is running." 
+        content: "I'm sorry, I'm having trouble connecting to the service." 
       }]);
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
-  const handleSendMessage = async (query: string) => {
+  // Core: Send message from UI
+  async function handleSendMessage(query: string) {
     if (!threadId || isLoading) return;
     await triggerMessage(threadId, query, threadHistory);
-  };
+  }
 
-  const handleNewThread = async () => {
-    try {
-      const newId = await api.createThread();
-      setThreadId(newId);
-      setMessages([]);
-      localStorage.setItem("rag_active_thread_id", newId);
-      return newId;
-    } catch (e) {
-      console.error("Failed to create thread", e);
-      return null;
+  // Effect: Initialization
+  useEffect(() => {
+    const savedThreads = JSON.parse(localStorage.getItem("rag_threads") || "[]") as ThreadMeta[];
+    setThreadHistory(savedThreads);
+
+    async function init() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const autoQuery = urlParams.get('q');
+      let currentThreadId = localStorage.getItem("rag_active_thread_id");
+
+      if (currentThreadId && savedThreads.find(t => t.id === currentThreadId) && !autoQuery) {
+        await loadThread(currentThreadId);
+      } else {
+        currentThreadId = await handleNewThread();
+      }
+
+      if (autoQuery && currentThreadId) {
+        window.history.replaceState({}, '', '/chat');
+        setTimeout(() => {
+           triggerMessage(currentThreadId!, autoQuery, savedThreads);
+        }, 100);
+      }
     }
-  };
+    init();
+  }, []);
+
+  // Effect: Auto-scroll
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isLoading]);
 
   return (
     <div className="flex h-screen bg-[var(--groww-border)] p-0 md:p-4 transition-colors duration-300">
