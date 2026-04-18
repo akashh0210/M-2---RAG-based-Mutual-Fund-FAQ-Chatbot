@@ -82,6 +82,17 @@ class ThreadResponse(BaseModel):
 
 # ── Endpoints ────────────────────────────────────────────────────────────────
 
+@app.get("/")
+async def root():
+    """Root endpoint for status and metadata."""
+    return {
+        "message": "SBI Mutual Fund RAG Assistant API is live",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "health": "/health"
+    }
+
+
 @app.post("/threads", response_model=ThreadResponse)
 async def create_thread():
     """Create a new conversation thread."""
