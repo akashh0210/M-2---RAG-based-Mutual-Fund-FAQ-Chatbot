@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Ensure data directory exists
-RUN mkdir -p /var/lib/data
+RUN mkdir -p /app/data
 
 # Expose the API port
 EXPOSE 10000

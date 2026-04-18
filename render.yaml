@@ -1,10 +1,11 @@
 services:
   - type: web
     name: mutual-funds-api
+    plan: free
     env: docker
     envVars:
       - key: RAG_DATABASE_PATH
-        value: /var/lib/data/rag.db
+        value: /app/data/rag.db
       - key: GROQ_API_KEY
         sync: false
       - key: CHROMA_TENANT
@@ -13,7 +14,3 @@ services:
         sync: false
       - key: CHROMA_API_KEY
         sync: false
-    disk:
-      name: rag-storage
-      mountPath: /var/lib/data
-      sizeGB: 1
