@@ -10,6 +10,7 @@ on:
 jobs:
   ingest:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
     env:
@@ -17,26 +18,32 @@ jobs:
       HEADLESS: 'true'
 
     steps:
+      # ── 1. Checkout ───────────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ── 2. System dependencies ───────────────────────────────────────────
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libasound2t64
 
+      # ── 3. Python setup ──────────────────────────────────────────────────
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
           cache: 'pip'
 
+      # ── 4. Install dependencies ──────────────────────────────────────────
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           npx playwright install chromium --with-deps
 
+      # ── 5. Run full ingestion pipeline ───────────────────────────────────
+      # The orchestrator runs: Scrape -> Fact Extract -> Chunk -> Embed -> Finalize
       - name: Run Ingestion Pipeline
         env:
           CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
@@ -45,13 +52,24 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          INGEST_RUN_ID: ${{ github.run_id }}
         run: |
-          # The orchestrator runs Scrape -> Fact Extract -> Chunk -> Embed -> Cloud
           python -m pipeline.run_pipeline
 
-      - name: Upload Logs (on failure)
-        if: failure()
+      # ── 6. Upload pipeline logs ──────────────────────────────────────────
+      - name: Upload pipeline logs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: pipeline-logs
-          path: logs/
+          name: pipeline-logs-${{ github.run_id }}
+          path: |
+            data/logs/
+            logs/
+          retention-days: 30
+
+      # ── 7. Failure notification ──────────────────────────────────────────
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Daily RAG Ingestion FAILED at $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          echo "::error::Check pipeline-logs artifact or scraping_logs table for details"
