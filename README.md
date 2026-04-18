@@ -15,10 +15,10 @@
 | 3 | Knowledge — Chunking + Embedding + Fact Cards | ✅ Complete |
 | 4 | Classification — Query Router + Refusal Engine | ✅ Complete |
 | 5 | Retrieval — Hybrid Search + Citation Selector | ✅ Complete |
-| 6 | Formatting — Answer Composer + One-Link Contract | 🔲 In Progress |
-| 7 | API — FastAPI Backend + Multi-Thread Support | 🔲 Not Started |
-| 8 | UI — Groww-Style Minimal Chat Interface | 🔲 Not Started |
-| 9 | QA — Evaluation + Refusal Testing + Citation Validation | 🔲 Not Started |
+| 6 | Formatting — Answer Composer + One-Link Contract | ✅ Complete |
+| 7 | API — FastAPI Backend + Multi-Thread Support | ✅ Complete |
+| 8 | UI — Groww-Style Minimal Chat Interface | ✅ Complete |
+| 9 | QA — Evaluation + Refusal Testing + Citation Validation | ✅ Complete |
 
 ---
 

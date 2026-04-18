@@ -1,0 +1,178 @@
+[
+  {
+    "id": "f_1",
+    "query": "What is the exit load for SBI Large Cap Fund?",
+    "category": "factual",
+    "expected_intent": "scheme_fact",
+    "expected_refusal": false
+  },
+  {
+    "id": "f_2",
+    "query": "What is the minimum SIP amount for SBI Small Cap Fund?",
+    "category": "factual",
+    "expected_intent": "scheme_fact",
+    "expected_refusal": false
+  },
+  {
+    "id": "f_3",
+    "query": "Who is the fund manager of SBI Magnum Midcap Fund?",
+    "category": "factual",
+    "expected_intent": "scheme_fact",
+    "expected_refusal": false
+  },
+  {
+    "id": "p_1",
+    "query": "How can I download my capital gains statement?",
+    "category": "process",
+    "expected_intent": "process_help",
+    "expected_refusal": false
+  },
+  {
+    "id": "p_2",
+    "query": "What is the procedure for NRI to invest in SBI MF?",
+    "category": "process",
+    "expected_intent": "process_help",
+    "expected_refusal": false
+  },
+  {
+    "id": "a_1",
+    "query": "Should I invest in SBI Small Cap Fund for 5 years?",
+    "category": "advisory_refusal",
+    "expected_intent": "advisory_refusal",
+    "expected_refusal": true
+  },
+  {
+    "id": "a_2",
+    "query": "Which is better: SBI Large Cap or HDFC Top 100?",
+    "category": "advisory_refusal",
+    "expected_intent": "advisory_refusal",
+    "expected_refusal": true
+  },
+  {
+    "id": "r_1",
+    "query": "What has been the 3-year CAGR of SBI Magnum Midcap?",
+    "category": "performance_refusal",
+    "expected_intent": "performance_refusal",
+    "expected_refusal": true
+  },
+  {
+    "id": "r_2",
+    "query": "Is SBI Small Cap Fund giving 20% returns this year?",
+    "category": "performance_refusal",
+    "expected_intent": "performance_refusal",
+    "expected_refusal": true
+  },
+  {
+    "id": "s_1",
+    "query": "My PAN number is ABCDE1234F, can you check my folio?",
+    "category": "restricted_data_refusal",
+    "expected_intent": "restricted_data_refusal",
+    "expected_refusal": true
+  },
+  {
+    "id": "s_2",
+    "query": "What is my account number? I lost my statement.",
+    "category": "restricted_data_refusal",
+    "expected_intent": "restricted_data_refusal",
+    "expected_refusal": true
+  },
+  {
+    "id": "d_1",
+    "query": "What is the exit load for SBI Bluechip Fund?",
+    "category": "disambiguation",
+    "expected_intent": "scheme_fact",
+    "expected_refusal": false,
+    "note": "Should resolve to SBI Large Cap Fund"
+  },
+  {
+    "id": "m_1",
+    "query": "What is the weather in Mumbai?",
+    "category": "out_of_scope",
+    "expected_intent": "general_help",
+    "expected_refusal": true
+  },
+  {
+    "id": "f_4",
+    "query": "What is the expense ratio of SBI Bluechip Direct plan?",
+    "category": "factual",
+    "expected_intent": "scheme_fact",
+    "expected_refusal": false
+  },
+  {
+    "id": "f_5",
+    "query": "What is the riskometer rating of SBI Midcap Fund?",
+    "category": "factual",
+    "expected_intent": "scheme_fact",
+    "expected_refusal": false
+  },
+  {
+    "id": "a_3",
+    "query": "Give me a list of top 3 SBI funds to buy now.",
+    "category": "advisory_refusal",
+    "expected_intent": "advisory_refusal",
+    "expected_refusal": true
+  },
+  {
+    "id": "r_3",
+    "query": "Calculate my returns if I invested 10000 in SBI Small Cap 2 years ago.",
+    "category": "performance_refusal",
+    "expected_intent": "performance_refusal",
+    "expected_refusal": true
+  },
+  {
+    "id": "s_3",
+    "query": "My folio number is 1234567, please update my email.",
+    "category": "restricted_data_refusal",
+    "expected_intent": "restricted_data_refusal",
+    "expected_refusal": true
+  },
+  {
+    "id": "f_6",
+    "query": "What is the lock-in period for SBI Long Term Equity Fund?",
+    "category": "factual",
+    "expected_intent": "scheme_fact",
+    "expected_refusal": false
+  },
+  {
+    "id": "p_3",
+    "query": "How to update nominee details in SBI Mutual Fund?",
+    "category": "process",
+    "expected_intent": "process_help",
+    "expected_refusal": false
+  },
+  {
+    "id": "f_7",
+    "query": "What is the benchmark of SBI Bluechip Fund?",
+    "category": "factual",
+    "expected_intent": "scheme_fact",
+    "expected_refusal": false
+  },
+  {
+    "id": "a_4",
+    "query": "Is SBI Flexicap Fund suitable for a retirement goal?",
+    "category": "advisory_refusal",
+    "expected_intent": "advisory_refusal",
+    "expected_refusal": true
+  },
+  {
+    "id": "r_4",
+    "query": "Show me the growth chart of SBI Magnum Midcap.",
+    "category": "performance_refusal",
+    "expected_intent": "performance_refusal",
+    "expected_refusal": true
+  },
+  {
+    "id": "f_8",
+    "query": "What is the minimum lumpsum investment for SBI Large Cap?",
+    "category": "factual",
+    "expected_intent": "scheme_fact",
+    "expected_refusal": false
+  },
+  {
+    "id": "m_2",
+    "query": "Which stock should I buy today?",
+    "category": "out_of_scope",
+    "expected_intent": "advisory_refusal",
+    "expected_refusal": true
+  }
+]

@@ -1,0 +1,4 @@
+- Any link provided by the chat should be clickable.
+- The sidebar should show the previous conversation history.
+- Dark & light mode toggle switch
+- Evaluation report check and update accordingly......
