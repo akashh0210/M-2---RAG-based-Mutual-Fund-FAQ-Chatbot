@@ -1,12 +1,8 @@
 services:
   - type: web
     name: mutual-funds-api
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
+    env: docker
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.9
       - key: RAG_DATABASE_PATH
         value: /var/lib/data/rag.db
       - key: GROQ_API_KEY

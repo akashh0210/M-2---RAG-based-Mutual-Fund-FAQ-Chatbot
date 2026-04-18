@@ -1,0 +1,16 @@
+.git
+.github
+.env
+data/*.db
+data/*.sqlite3
+logs/
+__pycache__/
+*.py[cod]
+frontend/node_modules
+frontend/.next
+frontend/out
+venv/
+.venv/
+env/
+.DS_Store
+Thumbs.db
