@@ -149,13 +149,17 @@ class Retriever:
 
             results = []
             if query_response and query_response['documents']:
-                for i in range(len(query_response['documents'][0])):
+                count = len(query_response['documents'][0])
+                logger.info("Found %d vector results for query (Scheme: %s)", count, scheme_name)
+                for i in range(count):
                     results.append(RetrievalResult(
                         source="vector_search",
                         content=query_response['documents'][0][i],
                         metadata=query_response['metadatas'][0][i],
                         score=query_response['distances'][0][i]
                     ))
+            else:
+                logger.warning("No vector results found in Chroma Cloud for query.")
             return results
         except Exception as e:
             logger.error("Vector search failed: %s", e)

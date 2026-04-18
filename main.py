@@ -19,6 +19,7 @@ from pipeline.models import (
     get_thread_history, 
     init_db
 )
+from pipeline.vector_store import get_vector_store
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 
@@ -133,14 +134,35 @@ async def post_message(thread_id: str, request: MessageRequest):
 
 @app.get("/sources")
 async def list_sources():
-    """List the 20 approved URLs and their last crawl status."""
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT scheme_name, official_url, status, last_crawled_at FROM source_documents")
-    rows = cursor.fetchall()
-    conn.close()
-    
-    return [dict(row) for row in rows]
+    """List distinct schemes from Chroma Cloud (Persistent) and sync status."""
+    try:
+        vs = get_vector_store()
+        # Fetch all metadatas from the collection
+        res = vs.collection.get(include=["metadatas"])
+        metadatas = res.get("metadatas", [])
+        
+        # Deduplicate schemes
+        unique_schemes = {}
+        for m in metadatas:
+            name = m.get("scheme_name")
+            if name and name not in unique_schemes:
+                unique_schemes[name] = {
+                    "scheme_name": name,
+                    "official_url": m.get("source_url") or m.get("official_url", "N/A"),
+                    "status": "active",
+                    "last_crawled_at": m.get("crawled_at", "N/A")
+                }
+        
+        return list(unique_schemes.values())
+    except Exception as e:
+        logger.error("Failed to fetch sources from Chroma: %s", e)
+        # Fallback to local DB if cloud fails or during transition
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT scheme_name, official_url, status, last_crawled_at FROM source_documents")
+        rows = cursor.fetchall()
+        conn.close()
+        return [dict(row) for row in rows]
 
 
 @app.get("/health")
