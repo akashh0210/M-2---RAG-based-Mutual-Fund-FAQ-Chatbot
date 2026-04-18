@@ -41,13 +41,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize Engine
-engine = RAGEngine()
+# ── Initialization ────────────────────────────────────────────────────────────
+engine = None
 
-# Ensure DB is ready
-conn = get_connection()
-init_db(conn)
-conn.close()
+@app.on_event("startup")
+async def startup_event():
+    global engine
+    try:
+        logger.info("Initializing RAG Engine and Database...")
+        # Ensure DB is ready
+        conn = get_connection()
+        init_db(conn)
+        conn.close()
+        
+        # Initialize Engine
+        engine = RAGEngine()
+        logger.info("Startup complete - Backend is READY")
+    except Exception as e:
+        logger.error("FATAL ERROR during startup: %s", e)
+        # We don't exit(1) here so logs can persist in some environments, 
+        # but the app will be in an unhealthy state.
+        engine = None
 
 # ── Schema ──────────────────────────────────────────────────────────────────
 
@@ -126,4 +140,4 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=7860)

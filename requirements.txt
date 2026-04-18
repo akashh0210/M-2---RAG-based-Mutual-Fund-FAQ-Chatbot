@@ -22,6 +22,7 @@ psycopg2-binary==2.9.9         # PostgreSQL (production)
 # Utilities
 python-dotenv==1.0.1
 tqdm==4.66.4                   # progress bars for batch embedding
-groq==0.5.0                    # Phase 6: LLM inference
+groq==0.15.0                   # Upgraded for compatibility
+httpx==0.27.2                  # Pinned to fix Groq client init crash
 fastapi==0.111.0               # Phase 7: API
 uvicorn==0.30.1                # Phase 7: Web server

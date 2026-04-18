@@ -19,8 +19,11 @@ COPY . .
 # Ensure data directory exists
 RUN mkdir -p /app/data
 
-# Expose the API port
-EXPOSE 10000
+# Optimize huggingface tokenizers
+ENV TOKENIZERS_PARALLELISM=false
+
+# Expose the API port (Hugging Face default)
+EXPOSE 7860
 
 # Start the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
