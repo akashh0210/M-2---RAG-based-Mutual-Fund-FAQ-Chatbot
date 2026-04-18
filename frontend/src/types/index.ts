@@ -6,7 +6,7 @@ export interface Message {
     scheme_name?: string;
     fact_type?: string;
     source_url?: string;
-    is_refused?: bool;
+    is_refused?: boolean;
   };
   created_at?: string;
 }
