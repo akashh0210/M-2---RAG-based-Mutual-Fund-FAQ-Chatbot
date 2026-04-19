@@ -9,6 +9,8 @@ Uses Groq (Llama-3-70b) for high-speed, accurate inference.
 import logging
 import os
 import re
+import time
+import random
 from typing import Optional, List
 from datetime import datetime
 
@@ -78,7 +80,7 @@ class AnswerComposer:
             return self._mock_compose(query, evidence, is_refusal)
 
     def _generate_answer(self, query: str, evidence: RetrievalResult) -> str:
-        """Generate a factual answer from evidence."""
+        """Generate a factual answer from evidence with retry logic."""
         
         # Try multiple keys for source URL
         source_url = (
@@ -100,10 +102,16 @@ class AnswerComposer:
         else:
             formatted_date = datetime.now().strftime("%Y-%m-%d")
 
-        prompt = f"Evidence:\n{evidence.content}\n\nURL: {source_url}\nDate: {formatted_date}\n\nQuestion: {query}"
+        # Context Truncation: Groq has tight TPM limits.
+        # 12,000 chars is roughly 3,000 tokens, which fits in most tiers Safely.
+        safe_content = evidence.content
+        if len(safe_content) > 12000:
+            logger.info("Truncating evidence content from %d to 12000 chars", len(safe_content))
+            safe_content = safe_content[:12000] + "\n[... Content truncated for brevity ...]"
 
-        completion = self.client.chat.completions.create(
-            model=GROQ_MODEL,
+        prompt = f"Evidence:\n{safe_content}\n\nURL: {source_url}\nDate: {formatted_date}\n\nQuestion: {query}"
+
+        return self._call_groq_with_retry(
             messages=[
                 {"role": "system", "content": ANSWER_COMPOSER_PROMPT},
                 {"role": "user", "content": prompt}
@@ -111,17 +119,15 @@ class AnswerComposer:
             temperature=0.1,
             max_tokens=512
         )
-        return completion.choices[0].message.content.strip()
 
     def _generate_refusal(self, query: str, refusal_template: Optional[str]) -> str:
-        """Generate a polite refusal for advisory/restricted queries."""
+        """Generate a polite refusal with retry logic."""
         
         context = f"Question: {query}"
         if refusal_template:
             context += f"\n\nBaseline Refusal Template (follow this logic): {refusal_template}"
 
-        completion = self.client.chat.completions.create(
-            model=GROQ_MODEL,
+        return self._call_groq_with_retry(
             messages=[
                 {"role": "system", "content": REFUSAL_ROUTER_PROMPT},
                 {"role": "user", "content": context}
@@ -129,7 +135,27 @@ class AnswerComposer:
             temperature=0.2,
             max_tokens=256
         )
-        return completion.choices[0].message.content.strip()
+
+    def _call_groq_with_retry(self, messages: List[dict], temperature: float, max_tokens: int, retries: int = 3) -> str:
+        """Helper to call Groq with exponential backoff for rate limits."""
+        for i in range(retries):
+            try:
+                completion = self.client.chat.completions.create(
+                    model=GROQ_MODEL,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens
+                )
+                return completion.choices[0].message.content.strip()
+            except Exception as e:
+                err_str = str(e).lower()
+                if ("rate_limit" in err_str or "429" in err_str) and i < retries - 1:
+                    wait_time = (2 ** i) + random.random()
+                    logger.warning("Groq Rate Limit hit. Retrying in %.2f seconds... (Attempt %d/%d)", wait_time, i+1, retries)
+                    time.sleep(wait_time)
+                    continue
+                # If it's not a rate limit or we're out of retries, raise it
+                raise e
 
     def _mock_compose(self, query: str, evidence: Optional[RetrievalResult], is_refusal: bool) -> str:
         """Fallback mock if API key is missing or service is down."""
