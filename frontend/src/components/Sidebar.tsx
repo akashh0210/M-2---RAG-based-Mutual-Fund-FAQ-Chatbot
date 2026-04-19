@@ -12,27 +12,27 @@ interface SidebarProps {
 
 export default function Sidebar({ onNewThread, activeThreadId, threadHistory, onSelectThread }: SidebarProps) {
   return (
-    <div className="w-64 border-r border-[var(--groww-border)] h-full bg-[var(--groww-bg)] flex flex-col hidden md:flex">
-      <div className="p-4 border-b border-[var(--groww-border)] flex items-center gap-2">
-        <div className="w-8 h-8 bg-[var(--groww-emerald)] rounded-lg flex items-center justify-center shadow-sm text-white">
+    <div className="w-64 border-r border-[var(--groww-border)] h-full bg-[var(--groww-bg)] flex flex-col hidden md:flex transition-all">
+      <div className="p-5 border-b border-[var(--groww-border)] flex items-center gap-2">
+        <div className="w-8 h-8 bg-[var(--groww-emerald)] rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 text-white">
             <ShieldCheck className="w-5 h-5" />
         </div>
-        <h1 className="font-bold text-lg tracking-tight text-[var(--groww-text)] leading-tight">Mutual Funds <br/><span className="text-[var(--groww-emerald)] text-sm">AI</span></h1>
+        <h1 className="font-bold text-base tracking-tight text-[var(--groww-text)] leading-none">Groww Assistant</h1>
       </div>
 
       <div className="p-4">
         <button 
           onClick={onNewThread}
-          className="w-full btn-primary flex items-center justify-center gap-2 py-3"
+          className="w-full bg-[var(--groww-emerald)]/10 hover:bg-[var(--groww-emerald)]/20 text-[var(--groww-emerald)] border border-[var(--groww-emerald)]/20 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold transition-all active:scale-95 text-sm"
         >
-          <Plus size={18} />
+          <Plus size={16} />
           <span>New Chat</span>
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-2">
-        <div className="text-xs font-semibold text-[var(--groww-text-muted)] px-3 py-2 uppercase tracking-wider">
-          Recent History
+      <div className="flex-1 overflow-y-auto px-2 py-4">
+        <div className="text-[10px] font-bold text-[var(--groww-text-muted)] px-4 py-2 uppercase tracking-[0.2em] mb-2 opacity-60">
+          Search History
         </div>
         <div className="space-y-1">
           {threadHistory.length > 0 ? (
@@ -41,28 +41,37 @@ export default function Sidebar({ onNewThread, activeThreadId, threadHistory, on
                 key={thread.id}
                 onClick={() => onSelectThread(thread.id)}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium cursor-pointer transition-all",
+                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold cursor-pointer transition-all",
                   activeThreadId === thread.id
-                    ? "bg-[var(--groww-surface)] border border-[var(--groww-emerald)] text-[var(--groww-emerald)] shadow-sm"
-                    : "text-[var(--groww-text)] hover:bg-[var(--groww-surface)] border border-transparent"
+                    ? "bg-[var(--groww-surface)] text-[var(--groww-emerald)] border border-[var(--groww-border)] shadow-sm"
+                    : "text-[var(--groww-text-muted)] hover:text-[var(--groww-text)] hover:bg-[var(--groww-surface)]/50"
                 )}
               >
-                <MessageSquare size={16} className={activeThreadId === thread.id ? "" : "text-[var(--groww-text-muted)]"} />
+                <div className={cn(
+                  "w-1.5 h-1.5 rounded-full shrink-0",
+                  activeThreadId === thread.id ? "bg-[var(--groww-emerald)]" : "bg-transparent"
+                )} />
                 <span className="truncate">{thread.title}</span>
               </div>
             ))
           ) : (
-            <div className="px-3 py-10 text-center text-[var(--groww-text-muted)] text-xs italic">
-              No previous conversations.
+            <div className="px-4 py-10 text-center text-[var(--groww-text-muted)] text-xs font-medium opacity-50">
+              No history found
             </div>
           )}
         </div>
       </div>
 
-      <div className="p-4 border-t border-[var(--groww-border)] bg-[var(--groww-surface)]">
-        <div className="flex items-center gap-2 text-xs text-[var(--groww-text-muted)]">
-          <div className="w-2 h-2 rounded-full bg-[var(--groww-emerald)] animate-pulse" />
-          <span>RAG Engine Online</span>
+      <div className="p-4 border-t border-[var(--groww-border)]">
+        <div className="bg-[var(--groww-surface)] p-3 rounded-xl border border-[var(--groww-border)] flex items-center gap-3">
+          <div className="relative">
+            <div className="w-2.5 h-2.5 rounded-full bg-[var(--groww-emerald)]" />
+            <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-[var(--groww-emerald)] animate-ping" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-[var(--groww-text)] leading-none">RAG ENGINE</span>
+            <span className="text-[9px] text-[var(--groww-emerald)] font-bold uppercase tracking-widest mt-0.5">Connected</span>
+          </div>
         </div>
       </div>
     </div>

@@ -1,8 +1,10 @@
 import { MessageResponse, Thread } from "../types";
 
 const getBaseUrl = () => {
-  const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-  return url.replace(/\/+$/, ""); // Remove trailing slashes
+  // Use environment variable if present, otherwise fallback to production URL
+  // Hardcoded production fallback as a temporary guard for connectivity
+  const url = process.env.NEXT_PUBLIC_API_URL || "https://akashh0210-mutual-funds-ai.hf.space";
+  return url.replace(/\/+$/, ""); 
 };
 
 const API_BASE_URL = getBaseUrl();

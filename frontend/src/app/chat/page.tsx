@@ -8,7 +8,7 @@ import RightSidebar from "@/components/RightSidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { api } from "@/lib/api";
 import { Message } from "@/types";
-import { Sparkles, MessageSquare, Zap } from "lucide-react";
+import { ShieldCheck, MessageSquare, Zap } from "lucide-react";
 
 const QUICK_PROMPTS = [
   "What is the exit load for SBI Bluechip Fund?",
@@ -164,8 +164,8 @@ export default function Home() {
                   <MessageSquare className="text-[var(--groww-emerald)] w-5 h-5" />
                </div>
                <div>
-                 <h2 className="font-bold text-[var(--groww-text)]">MF Assistant</h2>
-                 <p className="text-[10px] text-[var(--groww-emerald)] font-bold uppercase tracking-wider">Session Active</p>
+                 <h2 className="font-bold text-[var(--groww-text)]">Groww MF Assistant</h2>
+                 <p className="text-[10px] text-[var(--groww-emerald)] font-bold uppercase tracking-wider">Factual Agent Active</p>
                </div>
             </div>
             <div className="flex items-center gap-2">
@@ -181,12 +181,12 @@ export default function Home() {
             {messages.length === 0 && !isLoading ? (
               <div className="h-full flex flex-col items-center justify-center text-center max-w-2xl mx-auto space-y-8 animate-in fade-in zoom-in duration-500">
                 <div className="w-20 h-20 bg-[var(--groww-emerald)]/10 rounded-3xl flex items-center justify-center shadow-inner">
-                    <Sparkles size={40} className="text-[var(--groww-emerald)]" />
+                    <ShieldCheck size={40} className="text-[var(--groww-emerald)]" />
                 </div>
                 <div>
-                   <h3 className="text-2xl font-bold text-[var(--groww-text)]">Hello! I'm your SBI MF Expert.</h3>
+                   <h3 className="text-2xl font-bold text-[var(--groww-text)]">Ask a factual question.</h3>
                    <p className="text-sm text-[var(--groww-text-muted)] mt-2">
-                     Ask me anything about fund details, exit loads, expense ratios, or SIP processes. I only speak in facts!
+                     Answers are based on official public sources only. No investment advice or recommendations.
                    </p>
                 </div>
 
