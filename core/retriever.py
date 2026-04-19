@@ -76,6 +76,8 @@ class Retriever:
             return 1
         if "sbimf-scheme-details" in u:
             return 2
+        if "smartassist" in u:
+            return 2  # Higher priority for service help portal
         if any(x in u for x in ["onlinesbimf", "esoa", "forms", "smart-statement", "ways-to-invest", "nri-corner"]):
             return 3
         if any(x in u for x in ["mutualfundssahihai", "sebi.gov.in"]):

@@ -96,7 +96,7 @@ class RAGEngine:
                 "intent": intent.intent,
                 "scheme_name": intent.scheme_name,
                 "fact_type": intent.fact_type,
-                "source_url": best_evidence.metadata.get("source_url") if best_evidence else None
+                "source_url": best_evidence.metadata.get("source_url") or best_evidence.metadata.get("official_url") if best_evidence else None
             }
             save_message(conn, thread_id, "assistant", answer, meta)
             update_thread_context(conn, thread_id, intent.scheme_name, intent.intent)
