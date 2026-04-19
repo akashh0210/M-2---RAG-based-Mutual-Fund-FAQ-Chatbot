@@ -37,20 +37,31 @@ export default function RightSidebar({ onFundSelect }: { onFundSelect: (fund: st
       {/* Fund Selector */}
       <div className="p-6 border-b border-[var(--groww-border)]">
         <h3 className="text-[10px] font-bold text-[var(--groww-text-muted)] uppercase tracking-[0.2em] mb-4">Focus Context</h3>
-        <div className="relative group">
-          <select 
-            className="w-full bg-[var(--groww-surface)] border border-[var(--groww-border)] text-sm font-semibold rounded-xl p-3 outline-none focus:border-[var(--groww-emerald)] text-[var(--groww-text)] appearance-none cursor-pointer transition-all shadow-sm"
-            value={selectedFund}
-            onChange={(e) => handleFundSelect(e.target.value)}
+        <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+          <button 
+            onClick={() => handleFundSelect("ALL")}
+            className={`w-full text-left p-3 rounded-xl text-xs font-bold transition-all border ${
+              selectedFund === "ALL" 
+              ? "bg-[var(--groww-emerald)] text-white border-[var(--groww-emerald)] shadow-lg shadow-emerald-500/20" 
+              : "bg-[var(--groww-surface)] border-[var(--groww-border)] text-[var(--groww-text)] hover:border-[var(--groww-emerald)]/50"
+            }`}
           >
-            <option value="ALL">Auto-detect from query</option>
-            {uniqueFunds.map(fund => (
-              <option key={fund} value={fund}>{fund}</option>
-            ))}
-          </select>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--groww-text-muted)] group-hover:text-[var(--groww-emerald)]">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-          </div>
+            Auto-detect Context
+          </button>
+          
+          {uniqueFunds.map(fund => (
+            <button 
+              key={fund}
+              onClick={() => handleFundSelect(fund)}
+              className={`w-full text-left p-3 rounded-xl text-[11px] font-bold transition-all border ${
+                selectedFund === fund 
+                ? "bg-[var(--groww-emerald)] text-white border-[var(--groww-emerald)] shadow-lg shadow-emerald-500/20" 
+                : "bg-[var(--groww-surface)] border-[var(--groww-border)] text-[var(--groww-text)] hover:border-[var(--groww-emerald)]/50 hover:bg-[var(--groww-emerald)]/[0.02]"
+              }`}
+            >
+              {fund}
+            </button>
+          ))}
         </div>
       </div>
 
