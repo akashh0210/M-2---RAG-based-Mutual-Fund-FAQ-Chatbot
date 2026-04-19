@@ -73,14 +73,20 @@ class AnswerComposer:
             return self._generate_answer(query, evidence)
 
         except Exception as e:
-            logger.error("LLM composition failed: %s", e)
+            logger.error("LLM composition failed: %s", str(e), exc_info=True)
             # Fallback to mock mode instead of showing a scary connection error
             return self._mock_compose(query, evidence, is_refusal)
 
     def _generate_answer(self, query: str, evidence: RetrievalResult) -> str:
         """Generate a factual answer from evidence."""
         
-        source_url = evidence.metadata.get("source_url") or evidence.metadata.get("official_url", "N/A")
+        # Try multiple keys for source URL
+        source_url = (
+            evidence.metadata.get("source_url") or 
+            evidence.metadata.get("official_url") or 
+            evidence.metadata.get("url") or 
+            "N/A"
+        )
         
         # Try to extract date from metadata
         source_date = evidence.metadata.get("crawled_at") or evidence.metadata.get("last_updated_at")
@@ -90,7 +96,7 @@ class AnswerComposer:
                 dt = datetime.fromisoformat(source_date.replace("Z", "+00:00"))
                 formatted_date = dt.strftime("%Y-%m-%d")
             except:
-                formatted_date = source_date[:10]
+                formatted_date = str(source_date)[:10]
         else:
             formatted_date = datetime.now().strftime("%Y-%m-%d")
 
@@ -102,22 +108,12 @@ class AnswerComposer:
                 {"role": "system", "content": ANSWER_COMPOSER_PROMPT},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.0,  # Deterministic for facts
-            max_tokens=256
+            temperature=0.1,
+            max_tokens=512
         )
+        return completion.choices[0].message.content.strip()
 
-        answer = completion.choices[0].message.content.strip()
-        
-        # Final safety check: Ensure it has the link and footer
-        if "Source:" not in answer and source_url != "N/A":
-            answer += f"\n\nSource: {source_url}"
-        
-        if "Last updated" not in answer:
-            answer += f"\nLast updated from sources: {formatted_date}"
-
-        return answer
-
-    def _generate_refusal(self, query: str, refusal_template: Optional[str] = None) -> str:
+    def _generate_refusal(self, query: str, refusal_template: Optional[str]) -> str:
         """Generate a polite refusal for advisory/restricted queries."""
         
         context = f"Question: {query}"
@@ -136,14 +132,27 @@ class AnswerComposer:
         return completion.choices[0].message.content.strip()
 
     def _mock_compose(self, query: str, evidence: Optional[RetrievalResult], is_refusal: bool) -> str:
-        """Fallback mock if API key is missing."""
+        """Fallback mock if API key is missing or service is down."""
         if is_refusal:
             return "This assistant provides only factual information from official mutual fund sources. For investor education, please refer to: https://www.mutualfundssahihai.com/en/about-us"
         
         if not evidence:
-            return "I couldn't verify that from current official sources."
+            return "I couldn't verify that from current official sources. Please check the official AMC website."
             
-        return f"{evidence.content[:200]}...\n\nSource: {evidence.metadata.get('source_url', 'N/A')}\nLast updated from sources: {datetime.now().strftime('%Y-%m-%d')}"
+        # Try multiple keys for source URL
+        url = (
+            evidence.metadata.get("source_url") or 
+            evidence.metadata.get("official_url") or 
+            evidence.metadata.get("url") or 
+            "official SBI Mutual Fund sources"
+        )
+        
+        # Return a larger, more useful snippet in mock mode
+        snippet = evidence.content[:400].strip()
+        if len(evidence.content) > 400:
+            snippet += "..."
+
+        return f"Based on official documents: {snippet}\n\nSource: {url}\nLast updated: {datetime.now().strftime('%Y-%m-%d')}"
 
 # Testing
 if __name__ == "__main__":

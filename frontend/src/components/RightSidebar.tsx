@@ -27,7 +27,7 @@ export default function RightSidebar({ onFundSelect }: { onFundSelect: (fund: st
   };
 
   // Group by status
-  const recentUpdates = sources.filter(s => s.status === "updated" || s.status === "success").slice(0, 6);
+  const recentUpdates = sources.filter(s => ["updated", "success", "active"].includes(s.status)).slice(0, 6);
   // Get unique funds
   const uniqueFunds = Array.from(new Set(sources.filter(s => s.scheme_name).map(s => s.scheme_name as string))).sort();
 
