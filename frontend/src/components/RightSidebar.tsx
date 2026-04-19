@@ -27,9 +27,9 @@ export default function RightSidebar({ onFundSelect }: { onFundSelect: (fund: st
   };
 
   // Group by status
-  const recentUpdates = sources.filter(s => ["updated", "success", "active"].includes(s.status)).slice(0, 6);
+  const recentUpdates = sources.filter(s => ["updated", "success", "active"].includes(s.status) && s.scheme_name !== "None").slice(0, 6);
   // Get unique funds
-  const uniqueFunds = Array.from(new Set(sources.filter(s => s.scheme_name).map(s => s.scheme_name as string))).sort();
+  const uniqueFunds = Array.from(new Set(sources.filter(s => s.scheme_name && s.scheme_name !== "None").map(s => s.scheme_name as string))).sort();
 
   return (
     <div className="w-72 border-l border-[var(--groww-border)] h-full bg-[var(--groww-bg)] flex flex-col hidden lg:flex">

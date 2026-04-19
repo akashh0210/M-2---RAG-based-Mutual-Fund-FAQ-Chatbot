@@ -145,7 +145,7 @@ async def list_sources():
         unique_schemes = {}
         for m in metadatas:
             name = m.get("scheme_name")
-            if name and name not in unique_schemes:
+            if name and name != "None" and name not in unique_schemes:
                 unique_schemes[name] = {
                     "scheme_name": name,
                     "official_url": m.get("source_url") or m.get("official_url", "N/A"),
