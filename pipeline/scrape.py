@@ -148,6 +148,10 @@ def _scrape_one(conn, entry: dict) -> dict:
         # ── Fetch ──────────────────────────────────────────────────────────────
         if fetch_method == "playwright":
             raw_html, http_status = _fetch_with_playwright(url)
+        elif fetch_method == "pdf":
+             raw_text, http_status = _fetch_pdf(url)
+             # PDFs don't need text extraction or standard clean-up
+             raw_html = "" # placeholder
         else:
             raw_html, http_status = _fetch_with_requests(url)
 
@@ -155,7 +159,8 @@ def _scrape_one(conn, entry: dict) -> dict:
             raise ValueError(f"HTTP {http_status}")
 
         # ── Extract visible text ──────────────────────────────────────────────
-        raw_text = _extract_text(raw_html, entry["document_type"])
+        if fetch_method != "pdf":
+            raw_text = _extract_text(raw_html, entry["document_type"])
 
         # ── PII guard (page level) ────────────────────────────────────────────
         raw_text, pii_alert, pii_types = scan_and_redact(raw_text)
@@ -176,6 +181,7 @@ def _scrape_one(conn, entry: dict) -> dict:
             "source_id": source_id,
             "scheme_name": entry.get("scheme_name"),
             "document_type": entry["document_type"],
+            "intent_category": entry.get("intent_category"),
             "official_url": url,
             "domain": domain,
             "crawl_priority": entry["crawl_priority"],
@@ -211,6 +217,7 @@ def _scrape_one(conn, entry: dict) -> dict:
             "source_id": source_id,
             "scheme_name": entry.get("scheme_name"),
             "document_type": entry["document_type"],
+            "intent_category": entry.get("intent_category"),
             "official_url": url,
             "domain": domain,
             "crawl_priority": entry["crawl_priority"],
@@ -275,6 +282,36 @@ def _fetch_with_requests(url: str) -> tuple[str, int]:
                 time.sleep(2 ** attempt)
 
     return "", 0  # all retries exhausted
+
+
+def _fetch_pdf(url: str) -> tuple[str, int]:
+    """Download a PDF and extract its text content using pypdf."""
+    try:
+        from pypdf import PdfReader
+        import io
+    except ImportError:
+        logger.error("pypdf not installed — run: pip install pypdf")
+        return "", 0
+
+    try:
+        response = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
+        if response.status_code != 200:
+            return "", response.status_code
+        
+        with io.BytesIO(response.content) as f:
+            reader = PdfReader(f)
+            text_blocks = []
+            for page in reader.pages:
+                text = page.extract_text()
+                if text:
+                    text_blocks.append(text)
+            
+            full_text = "\n\n".join(text_blocks)
+            return full_text, 200
+            
+    except Exception as e:
+        logger.error("PDF fetch error for %s | %s", url, e)
+        return "", 0
 
 
 def _fetch_with_playwright(url: str) -> tuple[str, int]:
@@ -401,7 +438,7 @@ def _write_run_summary(summary: dict, run_id: str) -> None:
     path = f"{LOG_DIR}/run_summary_{run_id}.json"
     with open(path, "w", encoding="utf-8") as f:
         json.dump({"run_id": run_id, "run_at": _now_iso(), **summary}, f, indent=2)
-    logger.info("Run summary written → %s", path)
+    logger.info("Run summary written -> %s", path)
 
 
 def _now_ms() -> int:

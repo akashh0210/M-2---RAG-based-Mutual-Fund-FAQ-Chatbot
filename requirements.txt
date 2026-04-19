@@ -2,6 +2,7 @@
 requests==2.31.0
 beautifulsoup4==4.12.3
 lxml==5.1.0
+pypdf==4.2.0
 
 # JavaScript-rendered pages (Angular SPA: esoa.sbimf.com, corporate.sbimf.com)
 playwright==1.43.0

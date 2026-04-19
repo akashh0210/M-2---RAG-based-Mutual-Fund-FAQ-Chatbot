@@ -89,6 +89,7 @@ def init_db(conn) -> None:
             last_verified_at  TEXT,
             status            TEXT NOT NULL DEFAULT 'pending',
             language          TEXT NOT NULL DEFAULT 'en',
+            intent_category   TEXT,
             content_hash      TEXT,
             http_status       INTEGER,
             chunk_count       INTEGER DEFAULT 0,
@@ -191,7 +192,13 @@ def init_db(conn) -> None:
 
     conn.commit()
 
-    # ── MIGRATION: Add 'embedding' to source_chunks if it doesn't exist (SQLite) ─
+    # ── MIGRATIONS ────────────────────────────────────────────────────────────
+    try:
+        cursor.execute("ALTER TABLE source_documents ADD COLUMN intent_category TEXT")
+        conn.commit()
+    except Exception:
+        pass # already exists
+
     try:
         cursor.execute("ALTER TABLE source_chunks ADD COLUMN embedding TEXT")
         conn.commit()
@@ -270,13 +277,14 @@ def upsert_source_document(conn, data: dict) -> None:
     cursor.execute("""
         INSERT INTO source_documents
             (source_id, scheme_name, document_type, official_url, domain,
-             crawl_priority, fetch_method, last_crawled_at, last_verified_at,
+             crawl_priority, fetch_method, intent_category, last_crawled_at, last_verified_at,
              status, content_hash, http_status, chunk_count, access_notes, created_at)
         VALUES
             (:source_id, :scheme_name, :document_type, :official_url, :domain,
-             :crawl_priority, :fetch_method, :last_crawled_at, :last_verified_at,
+             :crawl_priority, :fetch_method, :intent_category, :last_crawled_at, :last_verified_at,
              :status, :content_hash, :http_status, :chunk_count, :access_notes, :created_at)
         ON CONFLICT(source_id) DO UPDATE SET
+            intent_category  = excluded.intent_category,
             last_crawled_at  = excluded.last_crawled_at,
             last_verified_at = excluded.last_verified_at,
             status           = excluded.status,
