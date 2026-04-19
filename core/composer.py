@@ -75,9 +75,10 @@ class AnswerComposer:
             return self._generate_answer(query, evidence)
 
         except Exception as e:
-            logger.error("LLM composition failed: %s", str(e), exc_info=True)
+            err_msg = str(e)
+            logger.error("LLM composition failed: %s", err_msg, exc_info=True)
             # Fallback to mock mode instead of showing a scary connection error
-            return self._mock_compose(query, evidence, is_refusal)
+            return self._mock_compose(query, evidence, is_refusal, debug_error=err_msg)
 
     def _generate_answer(self, query: str, evidence: RetrievalResult) -> str:
         """Generate a factual answer from evidence with retry logic."""
@@ -157,13 +158,15 @@ class AnswerComposer:
                 # If it's not a rate limit or we're out of retries, raise it
                 raise e
 
-    def _mock_compose(self, query: str, evidence: Optional[RetrievalResult], is_refusal: bool) -> str:
+    def _mock_compose(self, query: str, evidence: Optional[RetrievalResult], is_refusal: bool, debug_error: Optional[str] = None) -> str:
         """Fallback mock if API key is missing or service is down."""
+        debug_tag = f"\n\n[System Diagnostic: {debug_error}]" if debug_error else ""
+        
         if is_refusal:
-            return "This assistant provides only factual information from official mutual fund sources. For investor education, please refer to: https://www.mutualfundssahihai.com/en/about-us"
+            return f"This assistant provides only factual information from official mutual fund sources. For investor education, please refer to: https://www.mutualfundssahihai.com/en/about-us{debug_tag}"
         
         if not evidence:
-            return "I couldn't verify that from current official sources. Please check the official AMC website."
+            return f"I couldn't verify that from current official sources. Please check the official AMC website.{debug_tag}"
             
         # Try multiple keys for source URL
         url = (
@@ -178,7 +181,7 @@ class AnswerComposer:
         if len(evidence.content) > 400:
             snippet += "..."
 
-        return f"Based on official documents: {snippet}\n\nSource: {url}\nLast updated: {datetime.now().strftime('%Y-%m-%d')}"
+        return f"Based on official documents: {snippet}\n\nSource: {url}\nLast updated: {datetime.now().strftime('%Y-%m-%d')}{debug_tag}"
 
 # Testing
 if __name__ == "__main__":
