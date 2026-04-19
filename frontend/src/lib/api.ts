@@ -3,7 +3,7 @@ import { MessageResponse, Thread } from "../types";
 const getBaseUrl = () => {
   // Use environment variable if present, otherwise fallback to production URL
   // Hardcoded production fallback as a temporary guard for connectivity
-  const url = process.env.NEXT_PUBLIC_API_URL || "https://akashh0210-mutual-funds-ai.hf.space";
+  const url = process.env.NEXT_PUBLIC_API_URL || "https://akashh0210-mutual-funds-api.hf.space";
   return url.replace(/\/+$/, ""); 
 };
 
