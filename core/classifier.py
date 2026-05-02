@@ -87,7 +87,7 @@ PII_PATTERNS = [
     r"[A-Z]{5}[0-9]{4}[A-Z]{1}", # PAN
     r"\d{4}\s\d{4}\s\d{4}",     # Aadhaar
     r"\d{10,12}",                # Generic Account/Mobile
-    r"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$" # Email
+    r"[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+" # Email
 ]
 
 # ── Classifier Class ──────────────────────────────────────────────────────────

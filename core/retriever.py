@@ -93,8 +93,8 @@ class Retriever:
         try:
             cursor.execute("""
                 SELECT * FROM scheme_fact_cards 
-                WHERE scheme_name LIKE ? OR ? LIKE '%' || scheme_name || '%'
-            """, (f"%{scheme_name}%", scheme_name))
+                WHERE scheme_name LIKE ? OR scheme_name LIKE ?
+            """, (f"%{scheme_name}%", f"%{scheme_name}%"))
             row = cursor.fetchone()
             
             if not row:

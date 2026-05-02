@@ -36,7 +36,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
     return parts.map((part, i) => {
       if (part.match(urlRegex)) {
         return (
-          <a key={i} href={part} target="_blank" rel="noreferrer" className="text-blue-200 hover:underline font-medium underline underline-offset-2">
+          <a key={i} href={part} target="_blank" rel="noreferrer" className="text-blue-200 hover:underline font-medium underline-offset-2">
             {part}
           </a>
         );
@@ -119,7 +119,13 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
                        Original Source <Check size={10} className="text-[var(--groww-emerald)]" />
                     </div>
                     <div className="text-[10px] text-[var(--groww-text-muted)] font-medium truncate max-w-[200px] md:max-w-[320px] group-hover/link:text-[var(--groww-emerald)] transition-colors">
-                      {new URL(message.metadata.source_url).href}
+                      {(() => {
+                        try {
+                          return new URL(message.metadata.source_url).href;
+                        } catch {
+                          return message.metadata.source_url || "Official Source";
+                        }
+                      })()}
                     </div>
                   </div>
                 </div>

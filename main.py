@@ -8,8 +8,11 @@ Supports thread-based memory and context.
 
 import uuid
 import logging
+import time
+from collections import defaultdict
+from contextlib import asynccontextmanager
 from typing import List, Optional
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -26,27 +29,10 @@ from pipeline.vector_store import get_vector_store
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("api")
 
-app = FastAPI(
-    title="SBI Mutual Fund RAG Assistant API",
-    description="Backend service for Phase 7 of the Mutual Fund FAQ Chatbot.",
-    version="1.0.0"
-)
-
-# Enable CORS for frontend integration
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"], 
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
-    expose_headers=["*"]
-)
-
-# ── Initialization ────────────────────────────────────────────────────────────
 engine = None
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     global engine
     try:
         logger.info("Initializing RAG Engine and Database...")
@@ -63,6 +49,47 @@ async def startup_event():
         # We don't exit(1) here so logs can persist in some environments, 
         # but the app will be in an unhealthy state.
         engine = None
+    yield
+    # Shutdown cleanup (if needed in future)
+    logger.info("Shutting down API")
+
+app = FastAPI(
+    title="SBI Mutual Fund RAG Assistant API",
+    description="Backend service for Phase 7 of the Mutual Fund FAQ Chatbot.",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+# Enable CORS for frontend integration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["*"]
+)
+
+# ── Rate Limiting ─────────────────────────────────────────────────────────────
+# Lightweight in-memory rate limiter (10 req/min per IP)
+_rate_limit_store = defaultdict(list)
+RATE_LIMIT = 10
+RATE_WINDOW = 60  # seconds
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    if request.method == "OPTIONS":
+        return await call_next(request)
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.time()
+    window = _rate_limit_store[client_ip]
+    # Keep only timestamps within the current window
+    _rate_limit_store[client_ip] = [ts for ts in window if now - ts < RATE_WINDOW]
+    if len(_rate_limit_store[client_ip]) >= RATE_LIMIT:
+        logger.warning("Rate limit exceeded for IP: %s", client_ip)
+        raise HTTPException(status_code=429, detail="Rate limit exceeded. Please try again later.")
+    _rate_limit_store[client_ip].append(now)
+    return await call_next(request)
 
 # ── Schema ──────────────────────────────────────────────────────────────────
 

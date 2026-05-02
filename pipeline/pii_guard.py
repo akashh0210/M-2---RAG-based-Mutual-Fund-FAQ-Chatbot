@@ -110,8 +110,13 @@ def scan_and_redact(text: str) -> tuple[str, bool, list[str]]:
         
         for digit_match in _OTP_DIGIT_SEQUENCE.finditer(window):
             val = digit_match.group(0)
-            # Replace the value in the original text (only if it matches exactly)
-            redacted_text = redacted_text.replace(val, "[REDACTED-OTP]")
+            # Replace ONLY the specific occurrence near the trigger word
+            abs_pos = window_start + digit_match.start()
+            redacted_text = (
+                redacted_text[:abs_pos]
+                + "[REDACTED-OTP]"
+                + redacted_text[abs_pos + len(val):]
+            )
             alerts.append("OTP")
 
     pii_found = len(alerts) > 0

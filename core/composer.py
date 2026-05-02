@@ -103,7 +103,7 @@ class AnswerComposer:
             try:
                 dt = datetime.fromisoformat(source_date.replace("Z", "+00:00"))
                 formatted_date = dt.strftime("%Y-%m-%d")
-            except:
+            except Exception:
                 formatted_date = str(source_date)[:10]
         else:
             formatted_date = datetime.now().strftime("%Y-%m-%d")
