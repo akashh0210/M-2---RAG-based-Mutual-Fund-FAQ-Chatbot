@@ -111,7 +111,7 @@ jobs:
           try:
               client = chromadb.CloudClient(tenant=tenant, database=database, api_key=api_key)
               print(f'Heartbeat: {client.heartbeat()}')
-              coll = client.get_or_create_collection('sbi_mf_knowledge', metadata={'hnsw:space': 'cosine'})
+              coll = client.get_or_create_collection('sbi_mf_knowledge')
               print(f'Collection OK: {coll.name} (count={coll.count()})')
               print('Chroma Cloud connection OK')
           except Exception as e:
