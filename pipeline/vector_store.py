@@ -18,6 +18,26 @@ load_dotenv()
 
 logger = logging.getLogger("pipeline.vector_store")
 
+# ── Monkey-patch: ChromaDB client/server version mismatch ─────────────────────
+# Newer ChromaDB clients (0.5.7+) expect '_type' in collection metadata JSON,
+# but older Chroma Cloud servers do not return it. Patch the deserializer to
+# inject a default so that get_or_create_collection / get_collection work.
+try:
+    from chromadb.api.configuration import CollectionConfigurationInternal
+    _orig_from_json = CollectionConfigurationInternal.from_json
+
+    @classmethod
+    def _patched_from_json(cls, json_map):
+        if isinstance(json_map, dict) and "_type" not in json_map:
+            json_map = dict(json_map)
+            json_map["_type"] = "CollectionConfigurationInternal"
+        return _orig_from_json.__func__(cls, json_map)
+
+    CollectionConfigurationInternal.from_json = _patched_from_json
+    logger.info("Applied CollectionConfigurationInternal.from_json monkey-patch for _type fallback")
+except Exception:
+    pass  # Older chromadb versions don't have this module/class
+
 # ── Configuration ─────────────────────────────────────────────────────────────
 COLLECTION_NAME = "sbi_mf_knowledge"
 CHROMA_API_KEY = (os.getenv("CHROMA_API_KEY") or "").strip()

@@ -88,6 +88,21 @@ jobs:
         run: |
           python -c "
           import os, chromadb, sys
+
+          # Monkey-patch for ChromaDB client/server _type mismatch
+          try:
+              from chromadb.api.configuration import CollectionConfigurationInternal
+              _orig = CollectionConfigurationInternal.from_json
+              @classmethod
+              def _patched(cls, json_map):
+                  if isinstance(json_map, dict) and '_type' not in json_map:
+                      json_map = dict(json_map)
+                      json_map['_type'] = 'CollectionConfigurationInternal'
+                  return _orig.__func__(cls, json_map)
+              CollectionConfigurationInternal.from_json = _patched
+          except Exception:
+              pass
+
           tenant = os.getenv('CHROMA_TENANT', '').strip()
           database = os.getenv('CHROMA_DATABASE', '').strip()
           api_key = os.getenv('CHROMA_API_KEY', '').strip()
@@ -96,13 +111,8 @@ jobs:
           try:
               client = chromadb.CloudClient(tenant=tenant, database=database, api_key=api_key)
               print(f'Heartbeat: {client.heartbeat()}')
-              # Also verify collection access (this is where _type KeyError typically surfaces)
-              try:
-                  coll = client.get_or_create_collection('sbi_mf_knowledge', metadata={'hnsw:space': 'cosine'})
-                  print(f'Collection OK: {coll.name} (count={coll.count()})')
-              except KeyError as ke:
-                  print(f'::error::Collection config KeyError ({ke}). Client/server version mismatch — verify chromadb version matches server.')
-                  sys.exit(1)
+              coll = client.get_or_create_collection('sbi_mf_knowledge', metadata={'hnsw:space': 'cosine'})
+              print(f'Collection OK: {coll.name} (count={coll.count()})')
               print('Chroma Cloud connection OK')
           except Exception as e:
               print(f'::error::Chroma connection failed: {e}')
