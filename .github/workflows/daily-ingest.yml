@@ -39,8 +39,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --no-cache-dir -r requirements.txt
           npx playwright install chromium --with-deps
+
+      # ── 4b. Verify key dependency versions ────────────────────────────────
+      - name: Verify installed package versions
+        run: |
+          python -c "import chromadb, sys; print(f'::notice::chromadb version: {chromadb.__version__}')"
 
       # ── 5. Pre-flight: Verify secrets are loaded ──────────────────────────
       - name: Verify secrets (pre-flight check)
@@ -82,14 +87,26 @@ jobs:
           CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
         run: |
           python -c "
-          import os, chromadb
+          import os, chromadb, sys
           tenant = os.getenv('CHROMA_TENANT', '').strip()
           database = os.getenv('CHROMA_DATABASE', '').strip()
           api_key = os.getenv('CHROMA_API_KEY', '').strip()
-          print(f'Connecting: tenant={tenant[:8]}..., db={database}')
-          client = chromadb.CloudClient(tenant=tenant, database=database, api_key=api_key)
-          print(f'Heartbeat: {client.heartbeat()}')
-          print('Chroma Cloud connection OK')
+          print(f'::notice::Connecting: tenant={tenant[:8]}..., db={database}')
+          print(f'::notice::chromadb client version: {chromadb.__version__}')
+          try:
+              client = chromadb.CloudClient(tenant=tenant, database=database, api_key=api_key)
+              print(f'Heartbeat: {client.heartbeat()}')
+              # Also verify collection access (this is where _type KeyError typically surfaces)
+              try:
+                  coll = client.get_or_create_collection('sbi_mf_knowledge', metadata={'hnsw:space': 'cosine'})
+                  print(f'Collection OK: {coll.name} (count={coll.count()})')
+              except KeyError as ke:
+                  print(f'::error::Collection config KeyError ({ke}). Client/server version mismatch — verify chromadb version matches server.')
+                  sys.exit(1)
+              print('Chroma Cloud connection OK')
+          except Exception as e:
+              print(f'::error::Chroma connection failed: {e}')
+              sys.exit(1)
           "
 
       # ── 7. Run full ingestion pipeline ───────────────────────────────────

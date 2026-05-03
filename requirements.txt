@@ -13,7 +13,7 @@ tiktoken==0.7.0
 # Embeddings (Phase 3)
 openai==1.30.0
 sentence-transformers==3.0.0   # fallback: all-MiniLM-L6-v2
-chromadb==0.5.3
+chromadb==0.5.5
 numpy<2.0.0
 
 # Database

@@ -55,10 +55,23 @@ class VectorStore:
             )
             
             # Get or create the collection
-            self.collection = self.client.get_or_create_collection(
-                name=COLLECTION_NAME,
-                metadata={"hnsw:space": "cosine"}
-            )
+            try:
+                self.collection = self.client.get_or_create_collection(
+                    name=COLLECTION_NAME,
+                    metadata={"hnsw:space": "cosine"}
+                )
+            except KeyError as ke:
+                # Known chromadb client/server version mismatch (0.5.6+ vs older Cloud)
+                import chromadb as _cd
+                msg = (
+                    f"ChromaDB collection config deserialization failed (KeyError: {ke}). "
+                    f"This usually means the chromadb client version ({_cd.__version__}) "
+                    f"is incompatible with the Chroma Cloud server metadata format. "
+                    f"Pin chromadb to a version matching your Cloud server (e.g. 0.5.5)."
+                )
+                logger.error(msg)
+                raise RuntimeError(msg) from ke
+
             logger.info("Successfully connected to Chroma Cloud collection: %s", COLLECTION_NAME)
         except Exception as e:
             logger.error("Failed to connect to Chroma Cloud: %s", e)
