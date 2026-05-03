@@ -111,7 +111,27 @@ jobs:
           try:
               client = chromadb.CloudClient(tenant=tenant, database=database, api_key=api_key)
               print(f'Heartbeat: {client.heartbeat()}')
-              coll = client.get_or_create_collection('sbi_mf_knowledge')
+
+              # Attempt to get or create the collection.
+              # If it fails with 'Invalid parameter name: hnsw', the existing
+              # collection has stale HNSW metadata from an older client version.
+              # Recovery: delete the corrupted collection and recreate it.
+              try:
+                  coll = client.get_or_create_collection('sbi_mf_knowledge')
+              except Exception as e:
+                  err_str = str(e)
+                  if 'Invalid parameter' in err_str and 'hnsw' in err_str.lower():
+                      print('::warning::Collection has stale HNSW metadata. Deleting and recreating...')
+                      try:
+                          client.delete_collection(name='sbi_mf_knowledge')
+                          print('Deleted corrupted collection.')
+                      except Exception as del_err:
+                          print(f'Delete attempt: {del_err} (may already be gone)')
+                      coll = client.create_collection(name='sbi_mf_knowledge')
+                      print('Recreated collection with clean config.')
+                  else:
+                      raise
+
               print(f'Collection OK: {coll.name} (count={coll.count()})')
               print('Chroma Cloud connection OK')
           except Exception as e:

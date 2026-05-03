@@ -75,24 +75,42 @@ class VectorStore:
             )
             
             # Get or create the collection
-            # NOTE: ChromaDB 0.6+ Cloud manages HNSW config (space, M,
-            # construction_ef) entirely server-side.  Passing any hnsw:*
-            # metadata keys causes "Invalid parameter name: hnsw".
+            # NOTE: ChromaDB 0.6+ Cloud manages HNSW config server-side.
+            # If a collection was created with an older client that stored
+            # hnsw:* keys in its metadata, the 0.6.3 client will reject
+            # those keys with "Invalid parameter name: hnsw" when fetching
+            # the collection.  The recovery path is: delete → recreate.
             try:
                 self.collection = self.client.get_or_create_collection(
                     name=COLLECTION_NAME
                 )
-            except KeyError as ke:
-                # Known chromadb client/server version mismatch (0.5.6+ vs older Cloud)
-                import chromadb as _cd
-                msg = (
-                    f"ChromaDB collection config deserialization failed (KeyError: {ke}). "
-                    f"This usually means the chromadb client version ({_cd.__version__}) "
-                    f"is incompatible with the Chroma Cloud server metadata format. "
-                    f"Pin chromadb to a version matching your Cloud server (e.g. 0.5.5)."
-                )
-                logger.error(msg)
-                raise RuntimeError(msg) from ke
+            except (Exception, KeyError) as init_err:
+                err_str = str(init_err)
+                if "Invalid parameter" in err_str and "hnsw" in err_str.lower():
+                    logger.warning(
+                        "Collection '%s' has stale HNSW metadata from an older "
+                        "client version. Deleting and recreating...", COLLECTION_NAME
+                    )
+                    try:
+                        self.client.delete_collection(name=COLLECTION_NAME)
+                        logger.info("Deleted corrupted collection '%s'", COLLECTION_NAME)
+                    except Exception as del_err:
+                        logger.warning("Delete attempt: %s (may already be gone)", del_err)
+                    self.collection = self.client.create_collection(
+                        name=COLLECTION_NAME
+                    )
+                    logger.info("Recreated collection '%s' with clean config", COLLECTION_NAME)
+                elif isinstance(init_err, KeyError):
+                    import chromadb as _cd
+                    msg = (
+                        f"ChromaDB collection config deserialization failed "
+                        f"(KeyError: {init_err}). Client version: {_cd.__version__}. "
+                        f"This usually means client/server version mismatch."
+                    )
+                    logger.error(msg)
+                    raise RuntimeError(msg) from init_err
+                else:
+                    raise
 
             logger.info("Successfully connected to Chroma Cloud collection: %s", COLLECTION_NAME)
         except Exception as e:
