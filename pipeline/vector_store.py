@@ -75,16 +75,12 @@ class VectorStore:
             )
             
             # Get or create the collection
-            # NOTE: ChromaDB 0.6+ no longer accepts hnsw:space in metadata.
-            # Distance is managed server-side (cosine is default for BGE models).
+            # NOTE: ChromaDB 0.6+ Cloud manages HNSW config (space, M,
+            # construction_ef) entirely server-side.  Passing any hnsw:*
+            # metadata keys causes "Invalid parameter name: hnsw".
             try:
                 self.collection = self.client.get_or_create_collection(
-                    name=COLLECTION_NAME,
-                    metadata={
-                        "hnsw:space": "cosine",
-                        "hnsw:construction_ef": 128,
-                        "hnsw:M": 16
-                    }
+                    name=COLLECTION_NAME
                 )
             except KeyError as ke:
                 # Known chromadb client/server version mismatch (0.5.6+ vs older Cloud)
